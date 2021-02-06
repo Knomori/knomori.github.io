@@ -5,12 +5,12 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>归档</title>
+    <title>使用树莓派和samba搭建个人NAS - 邓邓的部落格</title>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
     <meta name="keywords" content="Fechin,"> 
-    
+    <meta name="description" content="我们知道如果想要共享文件，在Linux对Linux的环境下，最简单的方法就是通过NIS了；而Windows对Windows，最简单的方法则是“网上邻居”。那如果局域网中既有Windows也有Linu,"> 
     <meta name="author" content="Deng Xinhang"> 
     <link rel="alternative" href="atom.xml" title="邓邓的部落格" type="application/atom+xml"> 
     <link rel="icon" href="/img/favicon.png"> 
@@ -33,39 +33,75 @@
 <body class="loading">
     <span id="config-title" style="display:none">邓邓的部落格</span>
     <div id="loader"></div>
-    <div id="single" class="page">
-    <div id="top">
-        <a class="iconfont icon-left image-icon" href="javascript:history.back()"></a>
-    </div>
-    <div class="section">
-        <div class="article">
-            <div class="main">
-                <div class="content">
-                    <div class="timeline">
-                      <h2 class="timeline-title">归档: 2篇</h2><hr>
-                      
-                      
-                        
-                          <h3 class="timeline-subtitle">2021</h3>
-                        
-                        <div class="timeline-item">
-                          <time>2021-02-06</time>
-                          <a target="_self" href="/2021/02/06/%E4%BD%BF%E7%94%A8%E6%A0%91%E8%8E%93%E6%B4%BE%E5%92%8Csamba%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BANAS/">使用树莓派和samba搭建个人NAS</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2021-01-31</time>
-                          <a target="_self" href="/2021/01/31/%E5%BB%BA%E7%AB%99%E7%BA%AA%E5%BF%B5/">建站纪念</a>
-                        </div>
-                      
-                    </div>
-                </div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="iconfont icon-home image-icon" href="javascript:;" data-url="http://example.com"></a>
+    <div title="播放/暂停" class="iconfont icon-play"></div>
+    <h3 class="subtitle">使用树莓派和samba搭建个人NAS</h3>
+    <div class="social">
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="iconfont icon-scan" href="javascript:;"></a>
             </div>
+            <div id="qr"></div>
         </div>
     </div>
+    <div class="scrollbar"></div>
 </div>
 
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">使用树莓派和samba搭建个人NAS</h1>
+        <div class="stuff">
+            <span>二月 06, 2021</span>
+            
+  <ul class="post-tags-list" itemprop="keywords"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/%E6%A0%91%E8%8E%93%E6%B4%BE/" rel="tag">树莓派</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <p>我们知道如果想要共享文件，在Linux对Linux的环境下，最简单的方法就是通过NIS了；而Windows对Windows，最简单的方法则是“网上邻居”。那如果局域网中既有Windows也有Linux而且想要共享文件系统的话，那该怎么办？</p>
+<p>那就使用SAMBA服务器好了。</p>
+<p>SAMBA可以让Linux加入Windows的网上邻居支持，让不同的平台可以共享文件系统，非常好用。而且它的配置极其简单。</p>
+<h3 id="环境简介"><a href="#环境简介" class="headerlink" title="环境简介"></a>环境简介</h3><p>使用树莓派的系统如下所示，是基于Debian的64位系统：</p>
+<p><img src="%E4%BD%BF%E7%94%A8%E6%A0%91%E8%8E%93%E6%B4%BE%E5%92%8Csamba%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BANAS/SystemInfo.png" alt="系统信息"></p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+		data-enable='false'
+        data-ae='false'
+        data-ci=''
+        data-cs=''
+        data-r=''
+        data-o=''
+        data-a=''
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+        <div class='side'>
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">环境简介</span></a></li></ol>	
+        </div>
+    
+</div>
+
+
+    </div>
+</div>
 </body>
 
 
