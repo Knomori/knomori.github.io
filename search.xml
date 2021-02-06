@@ -23,7 +23,7 @@
 <p>那就使用SAMBA服务器好了。</p>
 <p>SAMBA可以让Linux加入Windows的网上邻居支持，让不同的平台可以共享文件系统，非常好用。而且它的配置极其简单。</p>
 <h3 id="环境简介"><a href="#环境简介" class="headerlink" title="环境简介"></a>环境简介</h3><p>使用树莓派的系统如下所示，是基于Debian的64位系统：</p>
-<p><img src="%E4%BD%BF%E7%94%A8%E6%A0%91%E8%8E%93%E6%B4%BE%E5%92%8Csamba%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BANAS/SystemInfo.png" alt="系统信息"></p>
+<p><img src="SystemInfo.png" alt="系统信息"></p>
 ]]></content>
       <categories>
         <category>教程</category>
