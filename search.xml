@@ -22,7 +22,7 @@
     <content><![CDATA[<p>我们知道如果想要共享文件，在Linux对Linux的环境下，最简单的方法就是通过NIS了；而Windows对Windows，最简单的方法则是“网上邻居”。那如果局域网中既有Windows也有Linux而且想要共享文件系统的话，那该怎么办？</p>
 <p>那就使用SAMBA服务器好了。</p>
 <p>SAMBA可以让Linux加入Windows的网上邻居支持，让不同的平台可以共享文件系统，非常好用。而且它的配置极其简单。</p>
-<h3 id="环境简介"><a href="#环境简介" class="headerlink" title="环境简介"></a>环境简介</h3><p>使用树莓派的系统如下所示，是基于Debian的64位系统：</p>
+<h3 id="环境简介"><a href="#环境简介" class="headerlink" title="环境简介"></a>环境简介</h3><p>使用树莓派的系统如下所示，是基于Debian的64位的操作系统：</p>
 <p><img src="SystemInfo.jpg" alt="系统信息"></p>
 <p><strong>提示：</strong>由于树莓派每次接入局域网时，路由器给分配的IP不固定，所以建议提前在路由器的管理页面进行树莓派的硬件MAC与IP地址的绑定。这样每次树莓派连接到路由器都会给分配一个固定的IP.</p>
 ]]></content>
