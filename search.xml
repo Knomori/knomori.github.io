@@ -24,6 +24,7 @@
 <p>SAMBA可以让Linux加入Windows的网上邻居支持，让不同的平台可以共享文件系统，非常好用。而且它的配置极其简单。</p>
 <h3 id="环境简介"><a href="#环境简介" class="headerlink" title="环境简介"></a>环境简介</h3><p>使用树莓派的系统如下所示，是基于Debian的64位系统：</p>
 <p><img src="SystemInfo.jpg" alt="系统信息"></p>
+<p><strong>提示：</strong>由于树莓派每次接入局域网时，路由器给分配的IP不固定，所以建议提前在路由器的管理页面进行树莓派的硬件MAC与IP地址的绑定。这样每次树莓派连接到路由器都会给分配一个固定的IP.</p>
 ]]></content>
       <categories>
         <category>教程</category>
