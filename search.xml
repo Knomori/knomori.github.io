@@ -37,10 +37,16 @@
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">testparm</span><br></pre></td></tr></table></figure>
 <p>如果没有提示错误信息，就表示写入的格式正确。</p>
 <p><a href="https://imgchr.com/i/yYgSv6"><img src="https://s3.ax1x.com/2021/02/06/yYgSv6.png" alt="测试写入的是否正确"></a></p>
-<h3 id="为samba分配可访问的用户"><a href="#为samba分配可访问的用户" class="headerlink" title="为samba分配可访问的用户"></a>为samba分配可访问的用户</h3><p>设置加入共享的用户pi并设置密码（此密码用于samba登陆，可以与pi用户原本的密码不一致）</p>
+<h3 id="为samba分配可访问的用户并启动此服务"><a href="#为samba分配可访问的用户并启动此服务" class="headerlink" title="为samba分配可访问的用户并启动此服务"></a>为samba分配可访问的用户并启动此服务</h3><p>设置加入共享的用户pi并设置密码（此密码用于samba登陆，可以与pi用户原本的密码不一致）</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">sudo smbpasswd -a pi</span><br></pre></td></tr></table></figure>
 <p><a href="https://imgchr.com/i/yYgRsK"><img src="https://s3.ax1x.com/2021/02/06/yYgRsK.png" alt="给samba分配可访问的用户pi" style="zoom: 67%;" /></a></p>
 <p>到此samba的配置工作可以说完成啦。</p>
+<p>接下来我们启动samba服务：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">sudo systemctl start smbd</span><br></pre></td></tr></table></figure>
+<p>查看samba服务状态：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">systemctl status smbd</span><br></pre></td></tr></table></figure>
+<p>如果显示绿色running表示服务已经正常启动并运行啦：</p>
+<p><a href="https://imgchr.com/i/yta1BR"><img src="https://s3.ax1x.com/2021/02/07/yta1BR.png" alt="查看samba状态"></a></p>
 <h3 id="Linux用户访问文件服务"><a href="#Linux用户访问文件服务" class="headerlink" title="Linux用户访问文件服务"></a>Linux用户访问文件服务</h3><p>以KDE桌面环境为例，可以直接在地址栏输入以下格式的地址就可以看到我们设置的共享文件夹或磁盘啦：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">smb:/你的树莓派IP地址</span><br></pre></td></tr></table></figure>
 <p><a href="https://imgchr.com/i/yY2znK"><img src="https://s3.ax1x.com/2021/02/06/yY2znK.png" alt="Linux用户登陆"></a></p>
