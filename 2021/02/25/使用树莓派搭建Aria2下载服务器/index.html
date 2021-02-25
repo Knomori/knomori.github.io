@@ -1,0 +1,233 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>使用树莓派搭建Aria2下载服务器 - 邓邓的部落格</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="Fechin,"> 
+    <meta name="description" content="Aria2 - 超快速下载实用程序（简介）aria2是用于下载文件的实用程序。支持的协议是HTTP（S），FTP，SFTP，BitTorrent和Metalink。  aria2可以从多个来源/协议,"> 
+    <meta name="author" content="Deng Xinhang"> 
+    <link rel="alternative" href="atom.xml" title="邓邓的部落格" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    
+    
+<link rel="stylesheet" href="/css/diaspora.css">
+
+	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads"
+        src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<body class="loading">
+    <span id="config-title" style="display:none">邓邓的部落格</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="iconfont icon-home image-icon" href="javascript:;" data-url="http://example.com"></a>
+    <div title="播放/暂停" class="iconfont icon-play"></div>
+    <h3 class="subtitle">使用树莓派搭建Aria2下载服务器</h3>
+    <div class="social">
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="iconfont icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">使用树莓派搭建Aria2下载服务器</h1>
+        <div class="stuff">
+            <span>二月 25, 2021</span>
+            
+  <ul class="post-tags-list" itemprop="keywords"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/%E6%A0%91%E8%8E%93%E6%B4%BE/" rel="tag">树莓派</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <h3 id="Aria2-超快速下载实用程序（简介）"><a href="#Aria2-超快速下载实用程序（简介）" class="headerlink" title="Aria2 - 超快速下载实用程序（简介）"></a>Aria2 - 超快速下载实用程序（简介）</h3><p>aria2是用于下载文件的实用程序。支持的协议是HTTP（S），FTP，SFTP，BitTorrent和Metalink。  aria2可以从多个来源/协议下载文件，并尝试利用最大下载带宽。它支持同时从HTTP（S）/ FTP /  SFTP和BitTorrent下载文件，而从HTTP（S）/ FTP /  SFTP下载的数据上传到BitTorrent群。使用Metalink的块校验和，aria2在下载BitTorrent之类的文件时会自动验证数据块。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/aria2/aria2">GitHub项目地址</a></p>
+<h3 id="环境简介"><a href="#环境简介" class="headerlink" title="环境简介"></a>环境简介</h3><p>本次使用的树莓派环境是：基于Debian的64位操作系统，详情如下：</p>
+<p><a target="_blank" rel="noopener" href="https://img.imgdb.cn/item/603717f75f4313ce2595caec.jpg"><img src="https://img.imgdb.cn/item/603717f75f4313ce2595caec.jpg" alt="环境简介"></a></p>
+<h3 id="安装Aria2并配置"><a href="#安装Aria2并配置" class="headerlink" title="安装Aria2并配置"></a>安装Aria2并配置</h3><p>我们直接使用软件源安装：</p>
+<p><code>sudo apt install aria2</code></p>
+<p>接下来创建配置文件：</p>
+<p><code>mkdir -p ~/.config/aria2/    #创建存放配置的文件夹</code></p>
+<p><code>nano ~/.config/aria2/aria2.config    #添加一个aria2的配置文件（注意不要用sudo）</code></p>
+<p>在这个文件中写入我们自己的配置：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#后台运行</span></span><br><span class="line">daemon=true</span><br><span class="line"><span class="comment">#用户名</span></span><br><span class="line"><span class="comment">#rpc-user=user</span></span><br><span class="line"><span class="comment">#密码</span></span><br><span class="line"><span class="comment">#rpc-passwd=passwd</span></span><br><span class="line"><span class="comment">#设置加密的密钥</span></span><br><span class="line">rpc-secret=secret</span><br><span class="line"><span class="comment">#允许rpc</span></span><br><span class="line">enable-rpc=true</span><br><span class="line"><span class="comment">#允许所有来源, web界面跨域权限需要</span></span><br><span class="line">rpc-allow-origin-<span class="built_in">all</span>=true</span><br><span class="line"><span class="comment">#是否启用https加密，启用之后要设置公钥,私钥的文件路径</span></span><br><span class="line"><span class="comment">#rpc-secure=true</span></span><br><span class="line"><span class="comment">#启用加密设置公钥</span></span><br><span class="line"><span class="comment">#rpc-certificate=/home/pi/.config/aria2/example.crt</span></span><br><span class="line"><span class="comment">#启用加密设置私钥</span></span><br><span class="line"><span class="comment">#rpc-private-key=/home/pi/.config/aria2/example.key</span></span><br><span class="line"><span class="comment">#允许外部访问，false的话只监听本地端口</span></span><br><span class="line">rpc-listen-<span class="built_in">all</span>=true</span><br><span class="line"><span class="comment">#RPC端口, 仅当默认端口被占用时修改</span></span><br><span class="line"><span class="comment">#rpc-listen-port=6800</span></span><br><span class="line"><span class="comment">#最大同时下载数(任务数), 路由建议值: 3</span></span><br><span class="line"><span class="built_in">max</span>-concurrent-downloads=<span class="number">5</span></span><br><span class="line"><span class="comment">#断点续传</span></span><br><span class="line"><span class="keyword">continue</span>=true</span><br><span class="line"><span class="comment">#同服务器连接数</span></span><br><span class="line"><span class="built_in">max</span>-connection-per-server=<span class="number">5</span></span><br><span class="line"><span class="comment">#最小文件分片大小, 下载线程数上限取决于能分出多少片, 对于小文件重要</span></span><br><span class="line"><span class="built_in">min</span>-split-size=10M</span><br><span class="line"><span class="comment">#单文件最大线程数, 路由建议值: 5</span></span><br><span class="line">split=<span class="number">10</span></span><br><span class="line"><span class="comment">#下载速度限制</span></span><br><span class="line"><span class="built_in">max</span>-overall-download-limit=<span class="number">0</span></span><br><span class="line"><span class="comment">#单文件速度限制</span></span><br><span class="line"><span class="built_in">max</span>-download-limit=<span class="number">0</span></span><br><span class="line"><span class="comment">#上传速度限制</span></span><br><span class="line"><span class="built_in">max</span>-overall-upload-limit=<span class="number">0</span></span><br><span class="line"><span class="comment">#单文件速度限制</span></span><br><span class="line"><span class="built_in">max</span>-upload-limit=<span class="number">0</span></span><br><span class="line"><span class="comment">#断开速度过慢的连接</span></span><br><span class="line"><span class="comment">#lowest-speed-limit=0</span></span><br><span class="line"><span class="comment">#验证用，需要1.16.1之后的release版本</span></span><br><span class="line"><span class="comment">#referer=*</span></span><br><span class="line"><span class="comment">#文件保存路径, 默认为当前启动位置(这里我的是下载到用户的Downloads文件夹下，可以根据需要修改)</span></span><br><span class="line"><span class="built_in">dir</span>=/media/pi/Downloads</span><br><span class="line"><span class="comment">#文件缓存, 使用内置的文件缓存, 如果你不相信Linux内核文件缓存和磁盘内置缓存时使用, 需要1.16及以上版本</span></span><br><span class="line"><span class="comment">#disk-cache=0</span></span><br><span class="line"><span class="comment">#另一种Linux文件缓存方式, 使用前确保您使用的内核支持此选项, 需要1.15及以上版本(?)</span></span><br><span class="line"><span class="comment">#enable-mmap=true</span></span><br><span class="line"><span class="comment">#文件预分配, 能有效降低文件碎片, 提高磁盘性能. 缺点是预分配时间较长</span></span><br><span class="line"><span class="comment">#所需时间 none &lt; falloc ? trunc &lt;&lt; prealloc, falloc和trunc需要文件系统和内核支持</span></span><br><span class="line">file-allocation=prealloc</span><br><span class="line"><span class="comment">#不进行证书校验</span></span><br><span class="line">check-certificate=false</span><br><span class="line"><span class="comment">#保存下载会话</span></span><br><span class="line">save-session=/home/pi/.config/aria2/aria2.session</span><br><span class="line"><span class="built_in">input</span>-file=/home/pi/.config/aria2/aria2.session</span><br><span class="line"><span class="comment">#断电续传</span></span><br><span class="line">save-session-interval=<span class="number">60</span></span><br></pre></td></tr></table></figure>
+<p>注意我这里的下载路径是<code>/media/pi/Downloads</code>，可以根据自己的情况修改;并且我这里设置的rpc密钥是<code>secret</code>。这些设置可以在后面以图形化的方式修改。</p>
+<p>​      </p>
+<p>配置完成后，还要创建该会话空白文件：</p>
+<p><code>touch /home/pi/.config/aria2/aria2.session</code></p>
+<p>启动并测试Aria2是否成功启动：</p>
+<p><code>aria2c --conf-path=/home/pi/.config/aria2/aria2.config</code></p>
+<p>可以使用<code>ps aux|grep aria2</code>查看是否有进程启动，如果有显示则说明启动成功了。</p>
+<p><a target="_blank" rel="noopener" href="https://img.imgdb.cn/item/6037207a5f4313ce25a40803.jpg"><img src="https://img.imgdb.cn/item/6037207a5f4313ce25a40803.jpg"></a></p>
+<h3 id="设置Aria服务和开机启动"><a href="#设置Aria服务和开机启动" class="headerlink" title="设置Aria服务和开机启动"></a>设置Aria服务和开机启动</h3><p>创建并编辑aria.service文件 ：</p>
+<p><code>sudo nano /lib/systemd/system/aria.service</code></p>
+<p>在该文件写入以下内容：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=Aria2 Service</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">User=pi</span><br><span class="line">Type=forking</span><br><span class="line">ExecStart=/usr/bin/aria2c --conf-path=/home/pi/.config/aria2/aria2.config</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+<p>重新载入服务，并设置开机启动：</p>
+<p><code>sudo systemctl daemon-reload sudo systemctl enable aria</code></p>
+<p><em>重启</em> 之后我们检查下aria服务的状态：<code>systemctl status aria</code></p>
+<p><a target="_blank" rel="noopener" href="https://img.imgdb.cn/item/603722165f4313ce25a68fc9.jpg"><img src="https://img.imgdb.cn/item/603722165f4313ce25a68fc9.jpg" alt="重启之后查看服务状态"></a></p>
+<h3 id="安装Aria2的Web可视化前端"><a href="#安装Aria2的Web可视化前端" class="headerlink" title="安装Aria2的Web可视化前端"></a>安装Aria2的Web可视化前端</h3><p>首先安装nginx和git：</p>
+<p><code>sudo apt install nginx git</code></p>
+<p>由于aria2的前端界面有好几种，这里就暂时选用AriaNg做管理界面。</p>
+<p>可以在这里下载到最新的版本：<a target="_blank" rel="noopener" href="https://github.com/mayswind/AriaNg">AriaNg</a> </p>
+<p><a target="_blank" rel="noopener" href="https://img.imgdb.cn/item/603755165f4313ce25ff498b.jpg"><img src="https://img.imgdb.cn/item/603755165f4313ce25ff498b.jpg" alt="点击即可下载"></a></p>
+<p>进去之在第二个zip包上右键，选择复制链接地址：</p>
+<p><a target="_blank" rel="noopener" href="https://img.imgdb.cn/item/603755c35f4313ce25003688.jpg"><img src="https://img.imgdb.cn/item/603755c35f4313ce25003688.jpg" alt="下载最新版本"></a></p>
+<p>接下来回到ssh终端，执行下载任务，并重命名为aria-ng：</p>
+<p><code>wget 你复制的链接 -O aria-ng.zip</code></p>
+<p>解压：</p>
+<p><code>unzip aria-ng.zip -d aria-ng</code></p>
+<p>将aria-ng放到nginx的/var/www/html/目录下，然后设置开机启动nginx：</p>
+<p><code>sudo mv aria-ng /var/www/html/</code></p>
+<p><code>sudo systemctl enable nginx</code></p>
+<p>用浏览器访问树莓派IP下的aria-ng，即：<code>http://你的树莓派地址/aria-ng</code><br>然后在<code>系统设置</code>点击<code>AriaNg设置</code> –&gt; <code>全局</code> –&gt; 设置语言为中文 –&gt; 点击<code>RPC</code>–&gt;修改为 rpc 密钥：<code>secret</code></p>
+<p><a target="_blank" rel="noopener" href="https://img.imgdb.cn/item/603757505f4313ce25023512.jpg"><img src="https://img.imgdb.cn/item/603757505f4313ce25023512.jpg"></a></p>
+<p>这样就配置完我们的AriaNg的Web界面啦。在设置里我们就可以同图形化的方式进行设置各个具体的参数（如果你需要的话）。</p>
+<h3 id="浏览器插件"><a href="#浏览器插件" class="headerlink" title="浏览器插件"></a>浏览器插件</h3><p>各个浏览器相关的插件很多，以火狐为例可以直接在附加组建里搜索Aria2，比如<code>Aria2下载器集成组件</code>：</p>
+<p>添加完后会提示设置服务器，我们只需要保持和前面的AriaNg的设置一致即可：</p>
+<p><a target="_blank" rel="noopener" href="https://img.imgdb.cn/item/603759855f4313ce250565f6.jpg"><img src="https://img.imgdb.cn/item/603759855f4313ce250565f6.jpg"></a></p>
+<p><a target="_blank" rel="noopener" href="https://img.imgdb.cn/item/60375a135f4313ce250622fc.jpg"><img src="https://img.imgdb.cn/item/60375a135f4313ce250622fc.jpg"></a></p>
+<p><a target="_blank" rel="noopener" href="https://img.imgdb.cn/item/60375a4f5f4313ce25066d18.jpg"><img src="https://img.imgdb.cn/item/60375a4f5f4313ce25066d18.jpg"></a></p>
+<p>全部设置完成之后我们会发现浏览器多出了一个附加组件，可以根据开关决定是否调用树莓派的Aria2下载服务器，点击详情可以直接进入我们的AriaNg的Web控制界面。</p>
+<p><a target="_blank" rel="noopener" href="https://img.imgdb.cn/item/60375b1d5f4313ce25077bd3.jpg"><img src="https://img.imgdb.cn/item/60375b1d5f4313ce25077bd3.jpg"></a></p>
+<p>值得注意的是，从详情进入后可能需要再次配置一次AriaNg页面（浏览器缓存的原因），填写的数据和配置AriaNg的方式一致。</p>
+<h3 id="实际效果"><a href="#实际效果" class="headerlink" title="实际效果"></a>实际效果</h3><p>当点击下载按钮时：</p>
+<p><a target="_blank" rel="noopener" href="https://img.imgdb.cn/item/60375cda5f4313ce2509aa93.jpg"><img src="https://img.imgdb.cn/item/60375cda5f4313ce2509aa93.jpg"></a></p>
+<p>点击下载就会调用树莓派的Aria2进行下载，如果不想下载的话可以点击 <em>另存为</em> 转到浏览器本地下载。</p>
+<p><a target="_blank" rel="noopener" href="https://img.imgdb.cn/item/60375d395f4313ce250a34d2.jpg"><img src="https://img.imgdb.cn/item/60375d395f4313ce250a34d2.jpg"></a></p>
+<p>转到AriaNg,可以看到我们的下载已经开始啦。</p>
+<p><a target="_blank" rel="noopener" href="https://img.imgdb.cn/item/60375d785f4313ce250a81e5.jpg"><img src="https://img.imgdb.cn/item/60375d785f4313ce250a81e5.jpg"></a></p>
+<h3 id="BT下载速度慢问题"><a href="#BT下载速度慢问题" class="headerlink" title="BT下载速度慢问题"></a>BT下载速度慢问题</h3><p>有时候我们会发现，使用aria2没有迅雷下载快，甚至下不动，原因是迅雷有自己的服务器，而Aria2没有加速服务器，有些种子一直没几个人上传导致只有几KB的速度甚至完全没速度，这种情况下该怎么办呢？<br> 给Aria2添加Tracker，让Aria2不只是从DHT网络或者种子文件中存储的Tracker信息，从而找到更多的下载源。 </p>
+<p><a target="_blank" rel="noopener" href="https://www.yaozuopan.top/index.php/archives/1014/">Tracker服务器</a></p>
+<p>比如这里汇总了20个常用的最优Tracker：（已经用逗号分割）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bt-tracker=udp://tracker.coppersurfer.tk:<span class="number">6969</span>/announce,udp://tracker.<span class="built_in">open</span>-internet.nl:<span class="number">6969</span>/announce,udp://tracker.skyts.net:<span class="number">6969</span>/announce,udp://tracker.piratepublic.com:<span class="number">1337</span>/announce,udp://tracker.opentrackr.org:<span class="number">1337</span>/announce,udp://<span class="number">9.</span>rarbg.to:<span class="number">2710</span>/announce,udp://retracker.coltel.ru:<span class="number">2710</span>/announce,udp://pubt.<span class="keyword">in</span>:<span class="number">2710</span>/announce,udp://public.popcorn-tracker.org:<span class="number">6969</span>/announce,udp://z.crazyhd.com:<span class="number">2710</span>/announce,udp://wambo.club:<span class="number">1337</span>/announce,udp://tracker4.itzmx.com:<span class="number">2710</span>/announce,udp://tracker1.wasabii.com.tw:<span class="number">6969</span>/announce,udp://tracker.zer0day.to:<span class="number">1337</span>/announce,udp://tracker.xku.tv:<span class="number">6969</span>/announce,udp://tracker.vanitycore.co:<span class="number">6969</span>/announce,udp://ipv4.tracker.harry.lu:<span class="number">80</span>/announce,udp://inferno.demonoid.pw:<span class="number">3418</span>/announce,udp://<span class="built_in">open</span>.facedatabg.net:<span class="number">6969</span>/announce,udp://mgtracker.org:<span class="number">6969</span>/announce</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://img.imgdb.cn/item/60375ed35f4313ce250c5b74.png"><img src="https://img.imgdb.cn/item/60375ed35f4313ce250c5b74.png"></a></p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+		data-enable='false'
+        data-ae='false'
+        data-ci=''
+        data-cs=''
+        data-r=''
+        data-o=''
+        data-a=''
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+        <div class='side'>
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Aria2-%E8%B6%85%E5%BF%AB%E9%80%9F%E4%B8%8B%E8%BD%BD%E5%AE%9E%E7%94%A8%E7%A8%8B%E5%BA%8F%EF%BC%88%E7%AE%80%E4%BB%8B%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">Aria2 - 超快速下载实用程序（简介）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E7%AE%80%E4%BB%8B"><span class="toc-number">2.</span> <span class="toc-text">环境简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85Aria2%E5%B9%B6%E9%85%8D%E7%BD%AE"><span class="toc-number">3.</span> <span class="toc-text">安装Aria2并配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AEAria%E6%9C%8D%E5%8A%A1%E5%92%8C%E5%BC%80%E6%9C%BA%E5%90%AF%E5%8A%A8"><span class="toc-number">4.</span> <span class="toc-text">设置Aria服务和开机启动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85Aria2%E7%9A%84Web%E5%8F%AF%E8%A7%86%E5%8C%96%E5%89%8D%E7%AB%AF"><span class="toc-number">5.</span> <span class="toc-text">安装Aria2的Web可视化前端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8F%92%E4%BB%B6"><span class="toc-number">6.</span> <span class="toc-text">浏览器插件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E6%95%88%E6%9E%9C"><span class="toc-number">7.</span> <span class="toc-text">实际效果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BT%E4%B8%8B%E8%BD%BD%E9%80%9F%E5%BA%A6%E6%85%A2%E9%97%AE%E9%A2%98"><span class="toc-number">8.</span> <span class="toc-text">BT下载速度慢问题</span></a></li></ol>	
+        </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+
+
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/typed.js"></script>
+<script src="/js/diaspora.js"></script>
+
+
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+
+
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</html>
