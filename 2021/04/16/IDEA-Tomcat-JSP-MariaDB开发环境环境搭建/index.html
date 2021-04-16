@@ -1,0 +1,213 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>IDEA+Tomcat+JSP+MariaDB的开发环境搭建 - 邓邓的部落格</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="部落格,"> 
+    <meta name="description" content="因为最近的实验是结合JSP与数据库做课程实验，而老师给的开发环境不知是什么时代的上古工具；又因为自己的平台有些特殊，配置方面遇到了一些小问题，网上也没有可靠的解决方法，故进行一次记录。
+环境说明：操,"> 
+    <meta name="author" content="Deng Xinhang"> 
+    <link rel="alternative" href="atom.xml" title="邓邓的部落格" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    
+    
+<link rel="stylesheet" href="/css/diaspora.css">
+
+	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads"
+        src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<body class="loading">
+    <span id="config-title" style="display:none">邓邓的部落格</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="iconfont icon-home image-icon" href="javascript:;" data-url="http://example.com"></a>
+    <div title="播放/暂停" class="iconfont icon-play"></div>
+    <h3 class="subtitle">IDEA+Tomcat+JSP+MariaDB的开发环境搭建</h3>
+    <div class="social">
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="iconfont icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">IDEA+Tomcat+JSP+MariaDB的开发环境搭建</h1>
+        <div class="stuff">
+            <span>四月 16, 2021</span>
+            
+  <ul class="post-tags-list" itemprop="keywords"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" rel="tag">环境搭建</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <p>因为最近的实验是结合JSP与数据库做课程实验，而老师给的开发环境不知是什么时代的上古工具；又因为自己的平台有些特殊，配置方面遇到了一些小问题，网上也没有可靠的解决方法，故进行一次记录。</p>
+<h2 id="环境说明："><a href="#环境说明：" class="headerlink" title="环境说明："></a>环境说明：</h2><p>操作系统：Arch Linux</p>
+<p>Tomcat版本：Tomcat9</p>
+<p>数据库版本：MariaDB 10.5.9</p>
+<p><img src="https://img.imgdb.cn/item/6078ff488322e6675c68b763.jpg" alt="数据库版本信息"></p>
+<p>数据库Java驱动版本：<code>mariadb-java-client-2.7.2.jar</code>  </p>
+<p><a target="_blank" rel="noopener" href="https://downloads.mariadb.org/connector-java/+releases/">MariaDB的Java驱动下载 </a>  <a target="_blank" rel="noopener" href="https://dev.mysql.com/downloads/connector/j/">MySQL的Java驱动下载</a></p>
+<p>由于MariaDB与MySQL是兼容的，所以你也可以使用MySQL的驱动，不过这里还是建议使用MariaDB提供的。<em>注意这里驱动的不同会使后面导入jar包的语法有细微的差别！！！</em></p>
+<h2 id="IDEA配置Tomcat"><a href="#IDEA配置Tomcat" class="headerlink" title="IDEA配置Tomcat"></a>IDEA配置Tomcat</h2><p>好的，我已经默认你安装完了Tomcat9，并且能够正常工作，能够正常访问。如果这一步你还没有做完，请进行百度。</p>
+<p>首先，让我们关闭Tomcat9：<code>sudo systemctl stop tomcat9</code>，因为后面开发环境使用Tomcat9时IDEA会直接执行Tomcat9的“副本”，也就是不会直接调用系统的Tomcat9，而是类似于拷贝了一份到你的工作目录下，所有的发布都在这。如果此时调用系统的<code>systemctl</code>命令开启Tomcat9,会使端口冲突。（Tomcat默认端口是8080）</p>
+<h3 id="首先新建一个JavaEE的Web项目"><a href="#首先新建一个JavaEE的Web项目" class="headerlink" title="首先新建一个JavaEE的Web项目"></a>首先新建一个JavaEE的Web项目</h3><p><img src="https://img.imgdb.cn/item/607907b58322e6675c795d8a.jpg" alt="javaEEWeb"></p>
+<h3 id="在IDEA中配置Tomcat服务器"><a href="#在IDEA中配置Tomcat服务器" class="headerlink" title="在IDEA中配置Tomcat服务器"></a>在IDEA中配置Tomcat服务器</h3><p>点击下拉菜单，选择Edit Configurations.</p>
+<p><img src="https://img.imgdb.cn/item/607909288322e6675c7ceb86.jpg" alt="配置服务器1"></p>
+<p>依次选择添加一个服务器，选择Tomcat，本地，接下来点击图中的<code>Configure</code></p>
+<p><img src="https://img.imgdb.cn/item/60790a898322e6675c7f3046.jpg" alt="配置服务器2"></p>
+<p>上图中第三部点进去之后填写你的服务器安装地址：Linux用户可以使用<code>whereis tomcat9</code>来查看Tomcat9的的安装位置。</p>
+<p><img src="https://img.imgdb.cn/item/60790b2e8322e6675c803eb2.jpg" alt="填写服务器安装地址"></p>
+<h3 id="测试你的服务器"><a href="#测试你的服务器" class="headerlink" title="测试你的服务器"></a>测试你的服务器</h3><p>确保你的服务器是关闭的，我们接下来将使用IDEA启动我们的服务器。</p>
+<p><img src="https://img.imgdb.cn/item/607924908322e6675cb69a24.jpg" alt="启动服务器"></p>
+<p>如果你是Linux用户，这里可能会遇到一个问题：权限不够，无法启动。根据IDEA的错误提示（用红色的框框进行标注的），可以看出是相关文件权限不够，IDEA无法复制Tomcat9的文件到我们的工作目录。我们可以使用Linux的<code>chmod</code>命令对相关文件加入其他人的可读权限即可。这是我的Tomcat9文件放行可读权限后的情况：</p>
+<p>首先：<code>sudo cd /usr/share/tomcat9/conf</code></p>
+<p>接着：<code>sudo chmod 644 catalina.policy catalina.properties context.xml jaspic-providers.xml jaspic-providers.xsd logging.properties server.xml tomcat-users.xml tomcat-users.xsd web.xml</code></p>
+<p><img src="https://img.imgdb.cn/item/607925af8322e6675cb91707.jpg" alt="放行权限"></p>
+<p>放行完成后我们就可以通过IDEA启动我们的服务器了。而且，在上面的图中，我们设置了自动更新类和资源，所以我们编辑完源文件后不必重启服务器，只需要点击浏览器图标或者刷新网页即可更新。</p>
+<h2 id="连接MariaDB数据库进行测试"><a href="#连接MariaDB数据库进行测试" class="headerlink" title="连接MariaDB数据库进行测试"></a>连接MariaDB数据库进行测试</h2><p>首先保证你的数据库已经完成了安装和初始化工作，如果没有的话请进行搜索。这里只进行讨论如何连接。</p>
+<h3 id="首先在数据库中新建一个表"><a href="#首先在数据库中新建一个表" class="headerlink" title="首先在数据库中新建一个表"></a>首先在数据库中新建一个表</h3><p>以我的数据库为例，数据库名称为：<code>MyStudent</code>；表的名称为：<code>jspdb</code>；数据库内容如下：</p>
+<p><img src="https://img.imgdb.cn/item/607928318322e6675cbeb96c.jpg" alt="数据库信息"></p>
+<h3 id="在IDEA中给工程添加数据库驱动jar包"><a href="#在IDEA中给工程添加数据库驱动jar包" class="headerlink" title="在IDEA中给工程添加数据库驱动jar包"></a>在IDEA中给工程添加数据库驱动jar包</h3><p>在工程的WEB-INF目录下，新建一个名为<code>lib</code>的文件夹，文件夹中放入我们下载好了的mariadb的驱动jar包。</p>
+<p><img src="https://img.imgdb.cn/item/6079296f8322e6675cc196f4.jpg" alt="添加下载的jar文件"></p>
+<p>接着打开本工程的目录结构：</p>
+<p><img src="https://img.imgdb.cn/item/60792a098322e6675cc2bc4e.jpg" alt="打开工程目录结构"></p>
+<p>接着添加我们的jar驱动到该工程目录下：</p>
+<p><img src="https://img.imgdb.cn/item/60792a798322e6675cc39770.jpg" alt="添加驱动jar"></p>
+<p>选择刚刚存放jar的文件，接着勾选上即可：</p>
+<p><img src="https://img.imgdb.cn/item/60792afe8322e6675cc484d7.jpg" alt="选择jar包"></p>
+<h3 id="在JSP页面中测试连接"><a href="#在JSP页面中测试连接" class="headerlink" title="在JSP页面中测试连接"></a>在JSP页面中测试连接</h3><p>在IDEA的<code>index.jsp</code>页面写入以下内容：（注意区分你的表和我的表的不同之处）</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page contentType=<span class="string">&quot;text/html;charset=UTF-8&quot;</span> language=<span class="string">&quot;java&quot;</span> %&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt;连接数据库&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;h3&gt;测试连接数据库&lt;/h3&gt;</span><br><span class="line">&lt;%<span class="meta">@page</span> <span class="keyword">import</span>=<span class="string">&quot;java.sql.*&quot;</span> %&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&lt;%</span><br><span class="line">    String DRIVER_PATH = <span class="string">&quot;org.mariadb.jdbc.Driver&quot;</span>; <span class="comment">//驱动路径</span></span><br><span class="line">    String URL = <span class="string">&quot;jdbc:mysql://localhost:3306/MyStudent?serverTimezone=GMT&quot;</span>; <span class="comment">//包括数据库的名称MyStudent</span></span><br><span class="line">    String USER_NAME = <span class="string">&quot;knosql&quot;</span>;      <span class="comment">//数据库用户名</span></span><br><span class="line">    String PASSWORD = <span class="string">&quot;76KLOP&quot;</span>;     <span class="comment">//数据库密码</span></span><br><span class="line">    Connection con = <span class="keyword">null</span>;</span><br><span class="line">    PreparedStatement preparedStatement = <span class="keyword">null</span>;</span><br><span class="line">    ResultSet resultSet = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        Class.forName(DRIVER_PATH);</span><br><span class="line">        con = DriverManager.getConnection(URL, USER_NAME, PASSWORD);</span><br><span class="line">        System.out.println(con);</span><br><span class="line">        <span class="comment">//      判断数据库是否连接成功</span></span><br><span class="line">        <span class="keyword">if</span> (con != <span class="keyword">null</span>) &#123;</span><br><span class="line">            out.println(<span class="string">&quot;数据库连接成功&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            out.println(<span class="string">&quot;数据库连接失败&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        String sql = <span class="string">&quot;SELECT * FROM jspdb&quot;</span>;	<span class="comment">//包括数据库的表的名称</span></span><br><span class="line"></span><br><span class="line">        preparedStatement = con.prepareStatement(sql);</span><br><span class="line">        resultSet = preparedStatement.executeQuery();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">%&gt;</span><br><span class="line"></span><br><span class="line">&lt;%</span><br><span class="line">    <span class="comment">//打印获取到的数据库的内容</span></span><br><span class="line">    <span class="keyword">while</span> (resultSet.next()) &#123;</span><br><span class="line">%&gt;</span><br><span class="line"></span><br><span class="line">&lt;p&gt;商品名称:&lt;% out.print(resultSet.getString(&quot;goodsname&quot;));%&gt;&lt;/p&gt;</span><br><span class="line">&lt;p&gt;商品价格:&lt;%=resultSet.getString(<span class="string">&quot;prise&quot;</span>)%&gt;</span><br><span class="line">&lt;/p&gt;</span><br><span class="line">&lt;hr&gt;</span><br><span class="line">&lt;%</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//关闭数据库</span></span><br><span class="line">    resultSet.close();</span><br><span class="line">    preparedStatement.close();</span><br><span class="line">%&gt;</span><br><span class="line"></span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p>注意我们MariaDB的数据库驱动路径的写法是：<code>org.mariadb.jdbc.Driver</code></p>
+<p>而如果你使用的是MySQL数据库的驱动路径的写法应该是：<code>com.mysql.jdbc.Driver</code></p>
+<p>如果测试成功的话，我们点击浏览器图标就可以看到连接后的结果啦：</p>
+<p><img src="https://img.imgdb.cn/item/60792cd08322e6675cc7d775.jpg" alt="数据库的连接结果"></p>
+<p>使用MariaDB的一个好处就是，它与MySQL的数据库驱动是兼容的，而且官方也进行了开源，我们可以直在IDEA的jar文件处点击小三角箭头查看其源代码。</p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+		data-enable='false'
+        data-ae='false'
+        data-ci=''
+        data-cs=''
+        data-r=''
+        data-o=''
+        data-a=''
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+        <div class='side'>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E8%AF%B4%E6%98%8E%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">环境说明：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IDEA%E9%85%8D%E7%BD%AETomcat"><span class="toc-number">2.</span> <span class="toc-text">IDEA配置Tomcat</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A6%96%E5%85%88%E6%96%B0%E5%BB%BA%E4%B8%80%E4%B8%AAJavaEE%E7%9A%84Web%E9%A1%B9%E7%9B%AE"><span class="toc-number">2.1.</span> <span class="toc-text">首先新建一个JavaEE的Web项目</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8IDEA%E4%B8%AD%E9%85%8D%E7%BD%AETomcat%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-number">2.2.</span> <span class="toc-text">在IDEA中配置Tomcat服务器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E4%BD%A0%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-number">2.3.</span> <span class="toc-text">测试你的服务器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5MariaDB%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9B%E8%A1%8C%E6%B5%8B%E8%AF%95"><span class="toc-number">3.</span> <span class="toc-text">连接MariaDB数据库进行测试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A6%96%E5%85%88%E5%9C%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%AD%E6%96%B0%E5%BB%BA%E4%B8%80%E4%B8%AA%E8%A1%A8"><span class="toc-number">3.1.</span> <span class="toc-text">首先在数据库中新建一个表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8IDEA%E4%B8%AD%E7%BB%99%E5%B7%A5%E7%A8%8B%E6%B7%BB%E5%8A%A0%E6%95%B0%E6%8D%AE%E5%BA%93%E9%A9%B1%E5%8A%A8jar%E5%8C%85"><span class="toc-number">3.2.</span> <span class="toc-text">在IDEA中给工程添加数据库驱动jar包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8JSP%E9%A1%B5%E9%9D%A2%E4%B8%AD%E6%B5%8B%E8%AF%95%E8%BF%9E%E6%8E%A5"><span class="toc-number">3.3.</span> <span class="toc-text">在JSP页面中测试连接</span></a></li></ol></li></ol>	
+        </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+
+
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/typed.js"></script>
+<script src="/js/diaspora.js"></script>
+
+
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+
+
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</html>
