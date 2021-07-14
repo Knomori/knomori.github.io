@@ -1,0 +1,202 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Linux下迁移/home分区 - 邓邓的部落格</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="部落格,"> 
+    <meta name="description" content="由于当初安装Arch的时候为了方便，就将/home目录和根目录安装在一个分区里了。如今也用了将近快一年的Arch，很明显，/home空间不够用了。这次索性就将其直接划分出一块新的固态给其使用。摸索了,"> 
+    <meta name="author" content="Deng Xinhang"> 
+    <link rel="alternative" href="atom.xml" title="邓邓的部落格" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    
+    
+<link rel="stylesheet" href="/css/diaspora.css">
+
+	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads"
+        src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<body class="loading">
+    <span id="config-title" style="display:none">邓邓的部落格</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="iconfont icon-home image-icon" href="javascript:;" data-url="http://example.com"></a>
+    <div title="播放/暂停" class="iconfont icon-play"></div>
+    <h3 class="subtitle">Linux下迁移/home分区</h3>
+    <div class="social">
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="iconfont icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">Linux下迁移/home分区</h1>
+        <div class="stuff">
+            <span>七月 14, 2021</span>
+            
+  <ul class="post-tags-list" itemprop="keywords"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/%E6%95%99%E7%A8%8B/" rel="tag">教程</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <p>由于当初安装Arch的时候为了方便，就将/home目录和根目录安装在一个分区里了。如今也用了将近快一年的Arch，很明显，/home空间不够用了。这次索性就将其直接划分出一块新的固态给其使用。摸索了一会，发现其实并不难，不过，为了演示方便，这里使用虚拟机进行演示。</p>
+<h2 id="确定好新的home分区位置并格式化"><a href="#确定好新的home分区位置并格式化" class="headerlink" title="确定好新的home分区位置并格式化"></a>确定好新的home分区位置并格式化</h2><p>比如我这里准备使用一块新的硬盘作为其新的home分区，而这一步可以使用KDE的分区管理器实现；当然如果不嫌麻烦的话也可以使用<code>fdisk</code>软件进行分区和格式化工作。不过我觉得比较麻烦（狗头）。我直接用KDE分区管理器进行新硬盘的分区和格式化工作：</p>
+<ul>
+<li><input disabled="" type="checkbox"> 之前的磁盘分配（可以看到所有的东西都被挂载在了/dev/sda硬盘中）：</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://pic.imgdb.cn/item/60ee450e5132923bf8f3b2f2.jpg"><img src="https://pic.imgdb.cn/item/60ee450e5132923bf8f3b2f2.jpg" alt="之前的磁盘分配"></a></p>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> 给新的硬盘格式化为ext4分区：</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://pic.imgdb.cn/item/60ee46c55132923bf8ff2733.jpg"><img src="https://pic.imgdb.cn/item/60ee46c55132923bf8ff2733.jpg" alt="格式化新的盘后"></a></p>
+<p>可以看到，我们将要迁移/home到新的盘符为<code>/dev/sdb1</code>，格式为<code>ext4</code></p>
+<p>如果你是全新的硬盘可能需要通过软件设置新的分区表GPT，然后才能分配新的分区。</p>
+<h2 id="迁移-home分区"><a href="#迁移-home分区" class="headerlink" title="迁移/home分区"></a>迁移/home分区</h2><ul>
+<li><p>首先创建挂载点，将新建立的分区挂载到挂载点，最后将home下的所有人间备份到分区中：</p>
+<p><a target="_blank" rel="noopener" href="https://pic.imgdb.cn/item/60ee48585132923bf809edec.jpg"><img src="https://pic.imgdb.cn/item/60ee48585132923bf809edec.jpg" alt="创建临时挂载点"></a></p>
+</li>
+</ul>
+<p>这里的<code>-a</code>属性的意思是复制的时候将文件的权限原封不动的复制过去。否则的话将无法登录。</p>
+<ul>
+<li><p>将原本的<code>/home</code>目录移动到<code>/home_old</code>做备份用</p>
+<p>​    <code>mv /home/* /home_old</code></p>
+</li>
+<li><p>将之前新分区挂载至home目录，并添加到fatab文件下，实现自动挂载</p>
+<p>首先编辑 <code>vim /etc/fstab</code></p>
+</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://pic.imgdb.cn/item/60ee4a5b5132923bf817d144.jpg"><img src="https://pic.imgdb.cn/item/60ee4a5b5132923bf817d144.jpg" alt="写入新的项目"></a></p>
+<p>完成后保存重启计算机。</p>
+<h2 id="重启完成之后检查"><a href="#重启完成之后检查" class="headerlink" title="重启完成之后检查"></a>重启完成之后检查</h2><p>首先如果你能重启并成功使用普通用户登录到系统，说明你已经成功了！！！我们当然还可以使用KDE分区编辑器进行查看：我们的新的硬盘已经挂载了我们的home目录。</p>
+<p><a target="_blank" rel="noopener" href="https://pic.imgdb.cn/item/60ee4c055132923bf823732a.jpg"><img src="https://pic.imgdb.cn/item/60ee4c055132923bf823732a.jpg" alt="查看是否完成操作"></a></p>
+<h2 id="能否使用KDE分区编辑器完成上述所有操作？"><a href="#能否使用KDE分区编辑器完成上述所有操作？" class="headerlink" title="能否使用KDE分区编辑器完成上述所有操作？"></a>能否使用KDE分区编辑器完成上述所有操作？</h2><p>我们首先来理一下思路。我们迁移的思路不就是先将原本的<code>/home</code>分区的内容拷贝到新的盘上，然后修改挂载点嘛。细心的小伙伴可能已经发现了，在KDE分区管理器下有一个<code>编辑挂载点</code>的功能。</p>
+<p>其实完全是可以的操作，但是记得在修改挂载点之前一定要记得先将原本<code>/home</code>分区的东西先系数拷贝进去，否则，后果会非常严重。因为修改挂载点的操作是立即执行的，所以在修改前一定要记得先进行备份。</p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+		data-enable='false'
+        data-ae='false'
+        data-ci=''
+        data-cs=''
+        data-r=''
+        data-o=''
+        data-a=''
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+        <div class='side'>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A1%AE%E5%AE%9A%E5%A5%BD%E6%96%B0%E7%9A%84home%E5%88%86%E5%8C%BA%E4%BD%8D%E7%BD%AE%E5%B9%B6%E6%A0%BC%E5%BC%8F%E5%8C%96"><span class="toc-number">1.</span> <span class="toc-text">确定好新的home分区位置并格式化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%81%E7%A7%BB-home%E5%88%86%E5%8C%BA"><span class="toc-number">2.</span> <span class="toc-text">迁移&#x2F;home分区</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%87%8D%E5%90%AF%E5%AE%8C%E6%88%90%E4%B9%8B%E5%90%8E%E6%A3%80%E6%9F%A5"><span class="toc-number">3.</span> <span class="toc-text">重启完成之后检查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%BD%E5%90%A6%E4%BD%BF%E7%94%A8KDE%E5%88%86%E5%8C%BA%E7%BC%96%E8%BE%91%E5%99%A8%E5%AE%8C%E6%88%90%E4%B8%8A%E8%BF%B0%E6%89%80%E6%9C%89%E6%93%8D%E4%BD%9C%EF%BC%9F"><span class="toc-number">4.</span> <span class="toc-text">能否使用KDE分区编辑器完成上述所有操作？</span></a></li></ol>	
+        </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+
+
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/typed.js"></script>
+<script src="/js/diaspora.js"></script>
+
+
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+
+
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</html>
