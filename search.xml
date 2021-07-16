@@ -338,47 +338,4 @@
         <tag>树莓派</tag>
       </tags>
   </entry>
-  <entry>
-    <title>Linux下迁移/home分区</title>
-    <url>/2021/07/14/ArchLinux%E4%B8%8B%E8%BF%81%E7%A7%BB-home%E5%88%86%E5%8C%BA/</url>
-    <content><![CDATA[<p>由于当初安装Arch的时候为了方便，就将/home目录和根目录安装在一个分区里了。如今也用了将近快一年的Arch，很明显，/home空间不够用了。这次索性就将其直接划分出一块新的固态给其使用。摸索了一会，发现其实并不难，不过，为了演示方便，这里使用虚拟机进行演示。</p>
-<h2 id="确定好新的home分区位置并格式化"><a href="#确定好新的home分区位置并格式化" class="headerlink" title="确定好新的home分区位置并格式化"></a>确定好新的home分区位置并格式化</h2><p>比如我这里准备使用一块新的硬盘作为其新的home分区，而这一步可以使用KDE的分区管理器实现；当然如果不嫌麻烦的话也可以使用<code>fdisk</code>软件进行分区和格式化工作。不过我觉得比较麻烦（狗头）。我直接用KDE分区管理器进行新硬盘的分区和格式化工作：</p>
-<ul>
-<li><input disabled="" type="checkbox"> 之前的磁盘分配（可以看到所有的东西都被挂载在了/dev/sda硬盘中）：</li>
-</ul>
-<p><a href="https://pic.imgdb.cn/item/60ee450e5132923bf8f3b2f2.jpg"><img src="https://pic.imgdb.cn/item/60ee450e5132923bf8f3b2f2.jpg" alt="之前的磁盘分配"></a></p>
-<ul>
-<li><input checked="" disabled="" type="checkbox"> 给新的硬盘格式化为ext4分区：</li>
-</ul>
-<p><a href="https://pic.imgdb.cn/item/60ee46c55132923bf8ff2733.jpg"><img src="https://pic.imgdb.cn/item/60ee46c55132923bf8ff2733.jpg" alt="格式化新的盘后"></a></p>
-<p>可以看到，我们将要迁移/home到新的盘符为<code>/dev/sdb1</code>，格式为<code>ext4</code></p>
-<p>如果你是全新的硬盘可能需要通过软件设置新的分区表GPT，然后才能分配新的分区。</p>
-<h2 id="迁移-home分区"><a href="#迁移-home分区" class="headerlink" title="迁移/home分区"></a>迁移/home分区</h2><ul>
-<li><p>首先创建挂载点，将新建立的分区挂载到挂载点，最后将home下的所有人间备份到分区中：</p>
-<p><a href="https://pic.imgdb.cn/item/60ee48585132923bf809edec.jpg"><img src="https://pic.imgdb.cn/item/60ee48585132923bf809edec.jpg" alt="创建临时挂载点"></a></p>
-</li>
-</ul>
-<p>这里的<code>-a</code>属性的意思是复制的时候将文件的权限原封不动的复制过去。否则的话将无法登录。</p>
-<ul>
-<li><p>将原本的<code>/home</code>目录移动到<code>/home_old</code>做备份用</p>
-<p>​    <code>mv /home/* /home_old</code></p>
-</li>
-<li><p>将之前新分区挂载至home目录，并添加到fatab文件下，实现自动挂载</p>
-<p>首先编辑 <code>vim /etc/fstab</code></p>
-</li>
-</ul>
-<p><a href="https://pic.imgdb.cn/item/60ee4a5b5132923bf817d144.jpg"><img src="https://pic.imgdb.cn/item/60ee4a5b5132923bf817d144.jpg" alt="写入新的项目"></a></p>
-<p>完成后保存重启计算机。</p>
-<h2 id="重启完成之后检查"><a href="#重启完成之后检查" class="headerlink" title="重启完成之后检查"></a>重启完成之后检查</h2><p>首先如果你能重启并成功使用普通用户登录到系统，说明你已经成功了！！！我们当然还可以使用KDE分区编辑器进行查看：我们的新的硬盘已经挂载了我们的home目录。</p>
-<p><a href="https://pic.imgdb.cn/item/60ee4c055132923bf823732a.jpg"><img src="https://pic.imgdb.cn/item/60ee4c055132923bf823732a.jpg" alt="查看是否完成操作"></a></p>
-<h2 id="能否使用KDE分区编辑器完成上述所有操作？"><a href="#能否使用KDE分区编辑器完成上述所有操作？" class="headerlink" title="能否使用KDE分区编辑器完成上述所有操作？"></a>能否使用KDE分区编辑器完成上述所有操作？</h2><p>我们首先来理一下思路。我们迁移的思路不就是先将原本的<code>/home</code>分区的内容拷贝到新的盘上，然后修改挂载点嘛。细心的小伙伴可能已经发现了，在KDE分区管理器下有一个<code>编辑挂载点</code>的功能。</p>
-<p>其实完全是可以的操作，但是记得在修改挂载点之前一定要记得先将原本<code>/home</code>分区的东西先系数拷贝进去，否则，后果会非常严重。因为修改挂载点的操作是立即执行的，所以在修改前一定要记得先进行备份。</p>
-]]></content>
-      <categories>
-        <category>教程</category>
-      </categories>
-      <tags>
-        <tag>教程</tag>
-      </tags>
-  </entry>
 </search>
