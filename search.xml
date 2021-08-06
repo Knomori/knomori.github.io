@@ -1,6 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Linux下迁移/home分区</title>
+    <url>/2021/07/14/ArchLinux%E4%B8%8B%E8%BF%81%E7%A7%BB-home%E5%88%86%E5%8C%BA/</url>
+    <content><![CDATA[<p>由于当初安装Arch的时候为了方便，就将/home目录和根目录安装在一个分区里了。如今也用了将近快一年的Arch，很明显，/home空间不够用了。这次索性就将其直接划分出一块新的固态给其使用。摸索了一会，发现其实并不难，不过，为了演示方便，这里使用虚拟机进行演示。</p>
+<h2 id="确定好新的home分区位置并格式化"><a href="#确定好新的home分区位置并格式化" class="headerlink" title="确定好新的home分区位置并格式化"></a>确定好新的home分区位置并格式化</h2><p>比如我这里准备使用一块新的硬盘作为其新的home分区，而这一步可以使用KDE的分区管理器实现；当然如果不嫌麻烦的话也可以使用<code>fdisk</code>软件进行分区和格式化工作。不过我觉得比较麻烦（狗头）。我直接用KDE分区管理器进行新硬盘的分区和格式化工作：</p>
+<ul>
+<li><input disabled="" type="checkbox"> 之前的磁盘分配（可以看到所有的东西都被挂载在了/dev/sda硬盘中）：</li>
+</ul>
+<p><a href="https://pic.imgdb.cn/item/60ee450e5132923bf8f3b2f2.jpg"><img src="https://pic.imgdb.cn/item/60ee450e5132923bf8f3b2f2.jpg" alt="之前的磁盘分配"></a></p>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> 给新的硬盘格式化为ext4分区：</li>
+</ul>
+<p><a href="https://pic.imgdb.cn/item/60ee46c55132923bf8ff2733.jpg"><img src="https://pic.imgdb.cn/item/60ee46c55132923bf8ff2733.jpg" alt="格式化新的盘后"></a></p>
+<p>可以看到，我们将要迁移/home到新的盘符为<code>/dev/sdb1</code>，格式为<code>ext4</code></p>
+<p>如果你是全新的硬盘可能需要通过软件设置新的分区表GPT，然后才能分配新的分区。</p>
+<h2 id="迁移-home分区"><a href="#迁移-home分区" class="headerlink" title="迁移/home分区"></a>迁移/home分区</h2><ul>
+<li><p>首先创建挂载点，将新建立的分区挂载到挂载点，最后将home下的所有人间备份到分区中：</p>
+<p><a href="https://pic.imgdb.cn/item/60ee48585132923bf809edec.jpg"><img src="https://pic.imgdb.cn/item/60ee48585132923bf809edec.jpg" alt="创建临时挂载点"></a></p>
+</li>
+</ul>
+<p>这里的<code>-a</code>属性的意思是复制的时候将文件的权限原封不动的复制过去。否则的话将无法登录。</p>
+<ul>
+<li><p>将原本的<code>/home</code>目录移动到<code>/home_old</code>做备份用</p>
+<p>​    <code>mv /home/* /home_old</code></p>
+</li>
+<li><p>将之前新分区挂载至home目录，并添加到fatab文件下，实现自动挂载</p>
+<p>首先编辑 <code>vim /etc/fstab</code></p>
+</li>
+</ul>
+<p><a href="https://pic.imgdb.cn/item/60ee4a5b5132923bf817d144.jpg"><img src="https://pic.imgdb.cn/item/60ee4a5b5132923bf817d144.jpg" alt="写入新的项目"></a></p>
+<p>完成后保存重启计算机。</p>
+<h2 id="重启完成之后检查"><a href="#重启完成之后检查" class="headerlink" title="重启完成之后检查"></a>重启完成之后检查</h2><p>首先如果你能重启并成功使用普通用户登录到系统，说明你已经成功了！！！我们当然还可以使用KDE分区编辑器进行查看：我们的新的硬盘已经挂载了我们的home目录。</p>
+<p><a href="https://pic.imgdb.cn/item/60ee4c055132923bf823732a.jpg"><img src="https://pic.imgdb.cn/item/60ee4c055132923bf823732a.jpg" alt="查看是否完成操作"></a></p>
+<h2 id="能否使用KDE分区编辑器完成上述所有操作？"><a href="#能否使用KDE分区编辑器完成上述所有操作？" class="headerlink" title="能否使用KDE分区编辑器完成上述所有操作？"></a>能否使用KDE分区编辑器完成上述所有操作？</h2><p>我们首先来理一下思路。我们迁移的思路不就是先将原本的<code>/home</code>分区的内容拷贝到新的盘上，然后修改挂载点嘛。细心的小伙伴可能已经发现了，在KDE分区管理器下有一个<code>编辑挂载点</code>的功能。</p>
+<p>其实完全是可以的操作，但是记得在修改挂载点之前一定要记得先将原本<code>/home</code>分区的东西先系数拷贝进去，否则，后果会非常严重。因为修改挂载点的操作是立即执行的，所以在修改前一定要记得先进行备份。</p>
+]]></content>
+      <categories>
+        <category>教程</category>
+      </categories>
+      <tags>
+        <tag>教程</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>ArchLinux下搭建Arm交叉编译环境</title>
     <url>/2021/04/27/ArchLinux%E4%B8%8B%E6%90%AD%E5%BB%BAArm%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/</url>
     <content><![CDATA[<p>这学期新开了一门Arm嵌入式，由于开发板不具备资自主编译的能力，所以必须搭建交叉编译环境。当然，交叉编译环境的主编译机器以Linux为佳，而我的主机恰好是Arch，原本以为在Arch上的交叉编译环境的搭建会轻松很多，然而事实是确实经历了一番坎坷的旅程，最终在群友的协助下完成了环境的搭建，故记录此过程以供大家参考。</p>
@@ -41,6 +84,53 @@
       </categories>
       <tags>
         <tag>教程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用树莓派和samba搭建个人NAS</title>
+    <url>/2021/02/06/%E4%BD%BF%E7%94%A8%E6%A0%91%E8%8E%93%E6%B4%BE%E5%92%8Csamba%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BANAS/</url>
+    <content><![CDATA[<p>我们知道如果想要共享文件，在Linux对Linux的环境下，最简单的方法就是通过NIS了；而Windows对Windows，最简单的方法则是“网上邻居”。那如果局域网中既有Windows也有Linux而且想要共享文件系统的话，那该怎么办？</p>
+<p>那就使用SAMBA服务器好了。</p>
+<p>SAMBA可以让Linux加入Windows的网上邻居支持，让不同的平台可以共享文件系统，非常好用。而且它的配置极其简单。</p>
+<h3 id="环境简介"><a href="#环境简介" class="headerlink" title="环境简介"></a>环境简介</h3><p>使用树莓派的系统如下所示，基于的是Debian的64位的操作系统：</p>
+<p><a href="https://imgchr.com/i/yY6Zod"><img src="https://s3.ax1x.com/2021/02/06/yY6Zod.png" alt="系统信息"></a></p>
+<p><strong>提示：</strong> 由于树莓派每次接入局域网时，路由器给分配的IP不固定，所以建议提前在路由器的管理页面进行树莓派的硬件MAC与IP地址的绑定。这样每次树莓派连接到路由器都会给分配一个固定的IP.</p>
+<h3 id="安装Samba和配套软件"><a href="#安装Samba和配套软件" class="headerlink" title="安装Samba和配套软件"></a>安装Samba和配套软件</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">sudo apt install samba samba-common-<span class="built_in">bin</span></span><br></pre></td></tr></table></figure>
+<p>期间会有此选项选择是即可</p>
+<h3 id="配置Samba并指定共享的目录"><a href="#配置Samba并指定共享的目录" class="headerlink" title="配置Samba并指定共享的目录"></a>配置Samba并指定共享的目录</h3><p>samba的配置文件路径为：<code>/etc/samba/smb.conf</code>，可以使用<code>nano</code>或<code>vim</code>编辑器编辑此文件：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">sudo nano /etc/samba/smb.conf</span><br></pre></td></tr></table></figure>
+<p>在最后添加自己的配置：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[Shared]</span><br><span class="line">   path &#x3D; &#x2F;media&#x2F;pi #要共享文件夹的路径</span><br><span class="line">   valid users &#x3D; pi	#允许的用户</span><br><span class="line">   browseable &#x3D; yes	#浏览及写入的权限</span><br><span class="line">   writable &#x3D; yes	</span><br><span class="line">   read only &#x3D; no</span><br></pre></td></tr></table></figure>
+<p>如果要共享的文件夹很多的话，也可以添加多个自己的配置。</p>
+<p>如果要共享的是外置硬盘，位置是<code>/media/pi</code></p>
+<p>编辑完成之后，我们可以对写入的信息进行测试，防止出错：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">testparm</span><br></pre></td></tr></table></figure>
+<p>如果没有提示错误信息，就表示写入的格式正确。</p>
+<p><a href="https://imgchr.com/i/yYgSv6"><img src="https://s3.ax1x.com/2021/02/06/yYgSv6.png" alt="测试写入的是否正确"></a></p>
+<h3 id="为samba分配可访问的用户并启动此服务"><a href="#为samba分配可访问的用户并启动此服务" class="headerlink" title="为samba分配可访问的用户并启动此服务"></a>为samba分配可访问的用户并启动此服务</h3><p>设置加入共享的用户pi并设置密码（此密码用于samba登陆，可以与pi用户原本的密码不一致）</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">sudo smbpasswd -a pi</span><br></pre></td></tr></table></figure>
+<p><a href="https://imgchr.com/i/yYgRsK"><img src="https://s3.ax1x.com/2021/02/06/yYgRsK.png" alt="给samba分配可访问的用户pi" style="zoom: 67%;" /></a></p>
+<p>到此samba的配置工作可以说完成啦。</p>
+<p>接下来我们启动samba服务：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">sudo systemctl start smbd</span><br></pre></td></tr></table></figure>
+<p>查看samba服务状态：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">systemctl status smbd</span><br></pre></td></tr></table></figure>
+<p>如果显示绿色running表示服务已经正常启动并运行啦：</p>
+<p><a href="https://imgchr.com/i/yta1BR"><img src="https://s3.ax1x.com/2021/02/07/yta1BR.png" alt="查看samba状态"></a></p>
+<h3 id="Linux用户访问文件服务"><a href="#Linux用户访问文件服务" class="headerlink" title="Linux用户访问文件服务"></a>Linux用户访问文件服务</h3><p>以KDE桌面环境为例，可以直接在地址栏输入以下格式的地址就可以看到我们设置的共享文件夹或磁盘啦：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">smb:/你的树莓派IP地址</span><br></pre></td></tr></table></figure>
+<p><a href="https://imgchr.com/i/yY2znK"><img src="https://s3.ax1x.com/2021/02/06/yY2znK.png" alt="Linux用户登陆"></a></p>
+<p>我们还可以将这个共享的地址固定到侧边栏，方便日后直接访问。可以在侧边栏的 <strong><em>远程</em></strong> 选项右键-&gt;<strong><em>添加位置</em></strong> ，配置好后即可快速访问。</p>
+<h3 id="Windows用户访问"><a href="#Windows用户访问" class="headerlink" title="Windows用户访问"></a>Windows用户访问</h3><p>Windows用户可以直接在 <em>此电脑</em> 右键，选择 <em>映射网络驱动器</em> 填写好格式后即可访问。这里注意必须填写正确的格式及共享文件夹的名称。</p>
+<p>Windows添加后下次打开此电脑会发现共享的文件夹已经固定在了下面。</p>
+<p><a href="https://imgchr.com/i/yYRovt"><img src="https://s3.ax1x.com/2021/02/06/yYRovt.png" alt="Windows用户"></a></p>
+<h3 id="防踩坑指南"><a href="#防踩坑指南" class="headerlink" title="防踩坑指南"></a>防踩坑指南</h3><p>第一次配置时我们会发现，明明配置好了，打开网络都能看到我们的这个文件夹了，但为什么就是看不到我插入的硬盘或U盘呢？其实，如果你的树莓派当初选择的是带桌面启动的模式，此服务必须在进入桌面后才可以生效。使用VNC登陆进树莓派即可。如果是家用则完全可以设置树莓派是开机自动以pi用户自动登录，实现此服务插电即用。</p>
+]]></content>
+      <categories>
+        <category>教程</category>
+      </categories>
+      <tags>
+        <tag>树莓派</tag>
       </tags>
   </entry>
   <entry>
@@ -97,50 +187,55 @@
       </tags>
   </entry>
   <entry>
-    <title>使用树莓派和samba搭建个人NAS</title>
-    <url>/2021/02/06/%E4%BD%BF%E7%94%A8%E6%A0%91%E8%8E%93%E6%B4%BE%E5%92%8Csamba%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BANAS/</url>
-    <content><![CDATA[<p>我们知道如果想要共享文件，在Linux对Linux的环境下，最简单的方法就是通过NIS了；而Windows对Windows，最简单的方法则是“网上邻居”。那如果局域网中既有Windows也有Linux而且想要共享文件系统的话，那该怎么办？</p>
-<p>那就使用SAMBA服务器好了。</p>
-<p>SAMBA可以让Linux加入Windows的网上邻居支持，让不同的平台可以共享文件系统，非常好用。而且它的配置极其简单。</p>
-<h3 id="环境简介"><a href="#环境简介" class="headerlink" title="环境简介"></a>环境简介</h3><p>使用树莓派的系统如下所示，基于的是Debian的64位的操作系统：</p>
-<p><a href="https://imgchr.com/i/yY6Zod"><img src="https://s3.ax1x.com/2021/02/06/yY6Zod.png" alt="系统信息"></a></p>
-<p><strong>提示：</strong> 由于树莓派每次接入局域网时，路由器给分配的IP不固定，所以建议提前在路由器的管理页面进行树莓派的硬件MAC与IP地址的绑定。这样每次树莓派连接到路由器都会给分配一个固定的IP.</p>
-<h3 id="安装Samba和配套软件"><a href="#安装Samba和配套软件" class="headerlink" title="安装Samba和配套软件"></a>安装Samba和配套软件</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">sudo apt install samba samba-common-<span class="built_in">bin</span></span><br></pre></td></tr></table></figure>
-<p>期间会有此选项选择是即可</p>
-<h3 id="配置Samba并指定共享的目录"><a href="#配置Samba并指定共享的目录" class="headerlink" title="配置Samba并指定共享的目录"></a>配置Samba并指定共享的目录</h3><p>samba的配置文件路径为：<code>/etc/samba/smb.conf</code>，可以使用<code>nano</code>或<code>vim</code>编辑器编辑此文件：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">sudo nano /etc/samba/smb.conf</span><br></pre></td></tr></table></figure>
-<p>在最后添加自己的配置：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[Shared]</span><br><span class="line">   path &#x3D; &#x2F;media&#x2F;pi #要共享文件夹的路径</span><br><span class="line">   valid users &#x3D; pi	#允许的用户</span><br><span class="line">   browseable &#x3D; yes	#浏览及写入的权限</span><br><span class="line">   writable &#x3D; yes	</span><br><span class="line">   read only &#x3D; no</span><br></pre></td></tr></table></figure>
-<p>如果要共享的文件夹很多的话，也可以添加多个自己的配置。</p>
-<p>如果要共享的是外置硬盘，位置是<code>/media/pi</code></p>
-<p>编辑完成之后，我们可以对写入的信息进行测试，防止出错：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">testparm</span><br></pre></td></tr></table></figure>
-<p>如果没有提示错误信息，就表示写入的格式正确。</p>
-<p><a href="https://imgchr.com/i/yYgSv6"><img src="https://s3.ax1x.com/2021/02/06/yYgSv6.png" alt="测试写入的是否正确"></a></p>
-<h3 id="为samba分配可访问的用户并启动此服务"><a href="#为samba分配可访问的用户并启动此服务" class="headerlink" title="为samba分配可访问的用户并启动此服务"></a>为samba分配可访问的用户并启动此服务</h3><p>设置加入共享的用户pi并设置密码（此密码用于samba登陆，可以与pi用户原本的密码不一致）</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">sudo smbpasswd -a pi</span><br></pre></td></tr></table></figure>
-<p><a href="https://imgchr.com/i/yYgRsK"><img src="https://s3.ax1x.com/2021/02/06/yYgRsK.png" alt="给samba分配可访问的用户pi" style="zoom: 67%;" /></a></p>
-<p>到此samba的配置工作可以说完成啦。</p>
-<p>接下来我们启动samba服务：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">sudo systemctl start smbd</span><br></pre></td></tr></table></figure>
-<p>查看samba服务状态：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">systemctl status smbd</span><br></pre></td></tr></table></figure>
-<p>如果显示绿色running表示服务已经正常启动并运行啦：</p>
-<p><a href="https://imgchr.com/i/yta1BR"><img src="https://s3.ax1x.com/2021/02/07/yta1BR.png" alt="查看samba状态"></a></p>
-<h3 id="Linux用户访问文件服务"><a href="#Linux用户访问文件服务" class="headerlink" title="Linux用户访问文件服务"></a>Linux用户访问文件服务</h3><p>以KDE桌面环境为例，可以直接在地址栏输入以下格式的地址就可以看到我们设置的共享文件夹或磁盘啦：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">smb:/你的树莓派IP地址</span><br></pre></td></tr></table></figure>
-<p><a href="https://imgchr.com/i/yY2znK"><img src="https://s3.ax1x.com/2021/02/06/yY2znK.png" alt="Linux用户登陆"></a></p>
-<p>我们还可以将这个共享的地址固定到侧边栏，方便日后直接访问。可以在侧边栏的 <strong><em>远程</em></strong> 选项右键-&gt;<strong><em>添加位置</em></strong> ，配置好后即可快速访问。</p>
-<h3 id="Windows用户访问"><a href="#Windows用户访问" class="headerlink" title="Windows用户访问"></a>Windows用户访问</h3><p>Windows用户可以直接在 <em>此电脑</em> 右键，选择 <em>映射网络驱动器</em> 填写好格式后即可访问。这里注意必须填写正确的格式及共享文件夹的名称。</p>
-<p>Windows添加后下次打开此电脑会发现共享的文件夹已经固定在了下面。</p>
-<p><a href="https://imgchr.com/i/yYRovt"><img src="https://s3.ax1x.com/2021/02/06/yYRovt.png" alt="Windows用户"></a></p>
-<h3 id="防踩坑指南"><a href="#防踩坑指南" class="headerlink" title="防踩坑指南"></a>防踩坑指南</h3><p>第一次配置时我们会发现，明明配置好了，打开网络都能看到我们的这个文件夹了，但为什么就是看不到我插入的硬盘或U盘呢？其实，如果你的树莓派当初选择的是带桌面启动的模式，此服务必须在进入桌面后才可以生效。使用VNC登陆进树莓派即可。如果是家用则完全可以设置树莓派是开机自动以pi用户自动登录，实现此服务插电即用。</p>
+    <title>「git-1」关于Git你应该知道的东西</title>
+    <url>/2021/04/13/%E5%85%B3%E4%BA%8Egit-%E4%BD%A0%E5%BA%94%E8%AF%A5%E7%9F%A5%E9%81%93%E7%9A%84%E4%B8%9C%E8%A5%BF/</url>
+    <content><![CDATA[<h2 id="Git的前世今生"><a href="#Git的前世今生" class="headerlink" title="Git的前世今生"></a>Git的前世今生</h2><p>Git 是 Linus Torvalds 2005年为了帮助管理 Linux 内核开发而开发的一个开放源码的版本控制软件。版本控制系统记录着我们随时间推移而对代码的更改，存储在一个特殊的数据库中，我们叫它Repository（仓库）。我们可以查看我们项目的历史，看看是谁在什么时间做了哪些更改，如果有错误的话，我们也可以很轻易地将项目还原到以前的状态。    </p>
+<p>Git和Mercurial都是分布式版本控制系统，其中Git最受欢迎的版本控制系统，因为它免费、开源、而且超级快和可扩展的操作；例如分支和合并在其他的版本控制系统中非常缓慢且及其痛苦。</p>
+<p>据统计，全球90%的开发人员使用git，这也就是为什么几乎所有的开发人员述职的时候都提到git的原因。所以git是履历表中必备的技能，应该由内到外的了解。了解它如何跟踪项目的历史和如何有效地与他人合作。</p>
+<h2 id="如何开始"><a href="#如何开始" class="headerlink" title="如何开始"></a>如何开始</h2><p><a href="https://git-scm.com/">下载Git</a></p>
+<p>我们接下来会使用控制台和一些简单的GUI程序进行演示，并且注意，<em>这是一个简单的git引入教程，如果你已经了解了工作流、想要看相关的命令的话，可以直接看本系列的第二篇。</em>所以，首先确保你安装好了Git.这是我的控制台，你的可能与我的看起来不一样，不过没有关系，这是我们要执行Git的地方。</p>
+<p><img src="https://img.imgdb.cn/item/60759ab58322e6675c79566d.jpg" alt="我的控制台"></p>
+<h3 id="初始化配置Git"><a href="#初始化配置Git" class="headerlink" title="初始化配置Git"></a>初始化配置Git</h3><p>第一次使用Git时，我们必须指定一些配置设置。我们必须指定我们的名称、电子邮件、默认的编辑器（可选，在Linux和Mac下默认是vim）以及它如何处理行尾。我们可以指定这些配置设置在3个不同的级别上：系统级别、全局级别和本地级别。他们的作用关系如下所示：</p>
+<p><img src="https://img.imgdb.cn/item/60759c958322e6675c7d9d76.jpg" alt="初始化级别"></p>
+<p>我们可以使用<code>git config</code> 接要配置的级别，再接上相应的项目，比如这里： </p>
+<blockquote>
+<p><code>git config --global user.name &quot;Your Name&quot;</code><br> #用户名<br><code>git config --global user.email &quot;email@example.com&quot;</code><br> #邮箱</p>
+<p>查看信息：</p>
+<p><code>git config -l</code></p>
+</blockquote>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> <em>如果再次以编辑器的方式配置git的设置我们可以使用 <code>git config --global -e</code>  编辑和查看我们的设置。</em></li>
+</ul>
+<h3 id="什么是文件行尾，怎么处理？"><a href="#什么是文件行尾，怎么处理？" class="headerlink" title="什么是文件行尾，怎么处理？"></a>什么是文件行尾，怎么处理？</h3><p>在Windows上，每一个文件的行尾都被标记上了两个特殊的字符：回车和换行。在Mac和Linux上，行尾用换行符表示。这意味着，如果不正确处理行尾，会导致一些奇怪的问题。</p>
+<p><img src="https://img.imgdb.cn/item/6075a0fc8322e6675c8a9b4d.jpg" alt="win和linux的行尾"></p>
+<p>为了使不同的操作平台得到相同的代码，我们必须修改Git的行尾处理设置。简而言之，在Windows平台，我们需要设置<code>core.autocrlf</code>属性为<code>true</code>，如果是Linux或Mac平台，则设置为<code>input</code>.例如我是Linux平台，设置为：</p>
+<p><img src="https://img.imgdb.cn/item/6075a90c8322e6675c9f3b2e.jpg"></p>
+<h3 id="寻求帮助"><a href="#寻求帮助" class="headerlink" title="寻求帮助"></a>寻求帮助</h3><p>如果你想了解git的相关命令信息，最简单的方法就是搜索，不过，git本身也提供了丰富的帮助文档。比如你想查询关于git config的相关命令，可以在终端中键入<code>git config --help</code>查看完整的帮助。当然你还可以输入<code>git config -h</code>查看简短的总结。</p>
+<h2 id="Git的工作方式"><a href="#Git的工作方式" class="headerlink" title="Git的工作方式"></a>Git的工作方式</h2><p>在这一章节中，我们将讨论经常被误解的git基本概念和工作方式，很多人在没有适当了解的情况下使用基本的git命令，这也是他们不断卡住的原因。</p>
+<p>首先，让我们建立一个工程文件夹。假设我的工程是<code>TestGit</code>，首先让我们初始化一个git仓库，使用的命令是<code>git init</code>.</p>
+<p>如果建立了初始的git仓库后，回到我们的终端，使用zsh终端的好处就是，在进入这个文件夹后你可以很直观地看到，终端会有明显的提示这是一个git存储库，如下图。这里展示的是zsh终端环境，在Windows平台可以安装posh-git.倘若没有装像我一样的终端也没有关系，它仅仅会使git变得更加漂亮。</p>
+<p><img src="https://img.imgdb.cn/item/6076d8c18322e6675ccab28f.jpg" alt="zsh明确指示"></p>
+<h3 id="git隐藏文件夹"><a href="#git隐藏文件夹" class="headerlink" title=".git隐藏文件夹"></a>.git隐藏文件夹</h3><p>初始化完成以后，我们会发现，在工程文件夹下会出现一个<code>.git</code>的文件夹。这个文件夹通常是隐藏的，这也是git存储有关我们的项目历史信息和相关分支的地方。当然，你不需要了解太多，只是记住，不要删除这个文件夹。</p>
+<h3 id="Git工作流"><a href="#Git工作流" class="headerlink" title="Git工作流"></a>Git工作流</h3><p>假设我们的工作文件夹已经初始化了一个git仓库，每当我们的项目达到我们所期望的状态时，我们可以记录我们的更改到存储库中，创建提交就像照快照一样。在git中，我们有一个特殊的区域或者叫做特殊的中间步骤，在其他的控制系统中不存在，它叫做暂存区，我们将修改后的文件添加到暂存区，如果一切正常，我们的快照将被永久地存储在存储库中。</p>
+<p>我们可以使用：</p>
+<p><code>git add &quot;你的文件&quot;</code>进行文件的添加（到工作区）。</p>
+<p><code>git commit -m &quot;提交的注释&quot;</code>进行文件的提交（到存储库）</p>
+<p><img src="https://img.imgdb.cn/item/6076e3eb8322e6675ce33b5f.jpg" alt="工作流"></p>
+<p>值得注意的是，如果我们对file1和file2做了修改 ，我们还要使用<code>git add file1</code>来保存我们刚刚的修改（到暂存区），再提交到存储库中。当然，如果途中你删除了file1，同样也要使用add命令来更新暂存区（是的你没看错，即使是删除了文件，也是add命令）。</p>
+<p>需要注意的是，git不会自动的追踪文件，我们需要手动的使用add指示git跟踪他们。我们可以使用：<code>git status</code>查看工作状态。如果你使用的是zsh终端，你也可以看出我们的提示标志变成了黄色，也就是“我们的工作区是脏的”，即可以进行下一次提交了。</p>
+<p><img src="https://img.imgdb.cn/item/6076e4c58322e6675ce5582f.jpg" alt="提交"></p>
+<h3 id="Git的提交？（commit）"><a href="#Git的提交？（commit）" class="headerlink" title="Git的提交？（commit）"></a>Git的提交？（commit）</h3><p>我们每次使用commit提交命令，git会生成唯一的标识符，当然它还包括提交的注释和相关内容的修改信息、通过谁可以获得我们项目完整的快照等等信息。</p>
+<p>不同于其他许多版本控制系统，git不存储已经更改的部分，它存储完整的增量信息，这样可以让我们更快地进行恢复。</p>
+<p>前面提到过使用<code>git commit -m &quot;注释&quot;</code>可以进行带注释的提交，那如果去掉<code>-m</code>的注释呢？是的。不加m选项可以直接打开默认的编辑器进行长注释的添加。值得注意的是，在这个文件中我们尽量使用标准的格式，也就是开始一段写较短的总结性的注释，接下来一段再写较长的注释。</p>
+<p><img src="https://img.imgdb.cn/item/6076e6528322e6675ce8a68b.jpg" alt="长注释"></p>
+<h4 id="什么时候该进行提交？"><a href="#什么时候该进行提交？" class="headerlink" title="什么时候该进行提交？"></a>什么时候该进行提交？</h4><p>不建议将提交的粒度分的太细，也不要过于大，这样会很难进行我们日后的修改，同样，不要尝试每天一定要提交多少次，也不要一次提交包含多个错误修复或更新。最佳的做法是当你的工作达到了你想到达的状态时，进行一次提交。</p>
+<p><img src="https://img.imgdb.cn/item/6076e7ee8322e6675cec09a1.jpg" alt="什么时候该提交"></p>
 ]]></content>
       <categories>
-        <category>教程</category>
+        <category>知识分享</category>
       </categories>
       <tags>
-        <tag>树莓派</tag>
+        <tag>git</tag>
       </tags>
   </entry>
   <entry>
@@ -219,58 +314,6 @@
       </tags>
   </entry>
   <entry>
-    <title>「git-1」关于Git你应该知道的东西</title>
-    <url>/2021/04/13/%E5%85%B3%E4%BA%8Egit-%E4%BD%A0%E5%BA%94%E8%AF%A5%E7%9F%A5%E9%81%93%E7%9A%84%E4%B8%9C%E8%A5%BF/</url>
-    <content><![CDATA[<h2 id="Git的前世今生"><a href="#Git的前世今生" class="headerlink" title="Git的前世今生"></a>Git的前世今生</h2><p>Git 是 Linus Torvalds 2005年为了帮助管理 Linux 内核开发而开发的一个开放源码的版本控制软件。版本控制系统记录着我们随时间推移而对代码的更改，存储在一个特殊的数据库中，我们叫它Repository（仓库）。我们可以查看我们项目的历史，看看是谁在什么时间做了哪些更改，如果有错误的话，我们也可以很轻易地将项目还原到以前的状态。    </p>
-<p>Git和Mercurial都是分布式版本控制系统，其中Git最受欢迎的版本控制系统，因为它免费、开源、而且超级快和可扩展的操作；例如分支和合并在其他的版本控制系统中非常缓慢且及其痛苦。</p>
-<p>据统计，全球90%的开发人员使用git，这也就是为什么几乎所有的开发人员述职的时候都提到git的原因。所以git是履历表中必备的技能，应该由内到外的了解。了解它如何跟踪项目的历史和如何有效地与他人合作。</p>
-<h2 id="如何开始"><a href="#如何开始" class="headerlink" title="如何开始"></a>如何开始</h2><p><a href="https://git-scm.com/">下载Git</a></p>
-<p>我们接下来会使用控制台和一些简单的GUI程序进行演示，并且注意，<em>这是一个简单的git引入教程，如果你已经了解了工作流、想要看相关的命令的话，可以直接看本系列的第二篇。</em>所以，首先确保你安装好了Git.这是我的控制台，你的可能与我的看起来不一样，不过没有关系，这是我们要执行Git的地方。</p>
-<p><img src="https://img.imgdb.cn/item/60759ab58322e6675c79566d.jpg" alt="我的控制台"></p>
-<h3 id="初始化配置Git"><a href="#初始化配置Git" class="headerlink" title="初始化配置Git"></a>初始化配置Git</h3><p>第一次使用Git时，我们必须指定一些配置设置。我们必须指定我们的名称、电子邮件、默认的编辑器（可选，在Linux和Mac下默认是vim）以及它如何处理行尾。我们可以指定这些配置设置在3个不同的级别上：系统级别、全局级别和本地级别。他们的作用关系如下所示：</p>
-<p><img src="https://img.imgdb.cn/item/60759c958322e6675c7d9d76.jpg" alt="初始化级别"></p>
-<p>我们可以使用<code>git config</code> 接要配置的级别，再接上相应的项目，比如这里： </p>
-<blockquote>
-<p><code>git config --global user.name &quot;Your Name&quot;</code><br> #用户名<br><code>git config --global user.email &quot;email@example.com&quot;</code><br> #邮箱</p>
-<p>查看信息：</p>
-<p><code>git config -l</code></p>
-</blockquote>
-<ul>
-<li><input checked="" disabled="" type="checkbox"> <em>如果再次以编辑器的方式配置git的设置我们可以使用 <code>git config --global -e</code>  编辑和查看我们的设置。</em></li>
-</ul>
-<h3 id="什么是文件行尾，怎么处理？"><a href="#什么是文件行尾，怎么处理？" class="headerlink" title="什么是文件行尾，怎么处理？"></a>什么是文件行尾，怎么处理？</h3><p>在Windows上，每一个文件的行尾都被标记上了两个特殊的字符：回车和换行。在Mac和Linux上，行尾用换行符表示。这意味着，如果不正确处理行尾，会导致一些奇怪的问题。</p>
-<p><img src="https://img.imgdb.cn/item/6075a0fc8322e6675c8a9b4d.jpg" alt="win和linux的行尾"></p>
-<p>为了使不同的操作平台得到相同的代码，我们必须修改Git的行尾处理设置。简而言之，在Windows平台，我们需要设置<code>core.autocrlf</code>属性为<code>true</code>，如果是Linux或Mac平台，则设置为<code>input</code>.例如我是Linux平台，设置为：</p>
-<p><img src="https://img.imgdb.cn/item/6075a90c8322e6675c9f3b2e.jpg"></p>
-<h3 id="寻求帮助"><a href="#寻求帮助" class="headerlink" title="寻求帮助"></a>寻求帮助</h3><p>如果你想了解git的相关命令信息，最简单的方法就是搜索，不过，git本身也提供了丰富的帮助文档。比如你想查询关于git config的相关命令，可以在终端中键入<code>git config --help</code>查看完整的帮助。当然你还可以输入<code>git config -h</code>查看简短的总结。</p>
-<h2 id="Git的工作方式"><a href="#Git的工作方式" class="headerlink" title="Git的工作方式"></a>Git的工作方式</h2><p>在这一章节中，我们将讨论经常被误解的git基本概念和工作方式，很多人在没有适当了解的情况下使用基本的git命令，这也是他们不断卡住的原因。</p>
-<p>首先，让我们建立一个工程文件夹。假设我的工程是<code>TestGit</code>，首先让我们初始化一个git仓库，使用的命令是<code>git init</code>.</p>
-<p>如果建立了初始的git仓库后，回到我们的终端，使用zsh终端的好处就是，在进入这个文件夹后你可以很直观地看到，终端会有明显的提示这是一个git存储库，如下图。这里展示的是zsh终端环境，在Windows平台可以安装posh-git.倘若没有装像我一样的终端也没有关系，它仅仅会使git变得更加漂亮。</p>
-<p><img src="https://img.imgdb.cn/item/6076d8c18322e6675ccab28f.jpg" alt="zsh明确指示"></p>
-<h3 id="git隐藏文件夹"><a href="#git隐藏文件夹" class="headerlink" title=".git隐藏文件夹"></a>.git隐藏文件夹</h3><p>初始化完成以后，我们会发现，在工程文件夹下会出现一个<code>.git</code>的文件夹。这个文件夹通常是隐藏的，这也是git存储有关我们的项目历史信息和相关分支的地方。当然，你不需要了解太多，只是记住，不要删除这个文件夹。</p>
-<h3 id="Git工作流"><a href="#Git工作流" class="headerlink" title="Git工作流"></a>Git工作流</h3><p>假设我们的工作文件夹已经初始化了一个git仓库，每当我们的项目达到我们所期望的状态时，我们可以记录我们的更改到存储库中，创建提交就像照快照一样。在git中，我们有一个特殊的区域或者叫做特殊的中间步骤，在其他的控制系统中不存在，它叫做暂存区，我们将修改后的文件添加到暂存区，如果一切正常，我们的快照将被永久地存储在存储库中。</p>
-<p>我们可以使用：</p>
-<p><code>git add &quot;你的文件&quot;</code>进行文件的添加（到工作区）。</p>
-<p><code>git commit -m &quot;提交的注释&quot;</code>进行文件的提交（到存储库）</p>
-<p><img src="https://img.imgdb.cn/item/6076e3eb8322e6675ce33b5f.jpg" alt="工作流"></p>
-<p>值得注意的是，如果我们对file1和file2做了修改 ，我们还要使用<code>git add file1</code>来保存我们刚刚的修改（到暂存区），再提交到存储库中。当然，如果途中你删除了file1，同样也要使用add命令来更新暂存区（是的你没看错，即使是删除了文件，也是add命令）。</p>
-<p>需要注意的是，git不会自动的追踪文件，我们需要手动的使用add指示git跟踪他们。我们可以使用：<code>git status</code>查看工作状态。如果你使用的是zsh终端，你也可以看出我们的提示标志变成了黄色，也就是“我们的工作区是脏的”，即可以进行下一次提交了。</p>
-<p><img src="https://img.imgdb.cn/item/6076e4c58322e6675ce5582f.jpg" alt="提交"></p>
-<h3 id="Git的提交？（commit）"><a href="#Git的提交？（commit）" class="headerlink" title="Git的提交？（commit）"></a>Git的提交？（commit）</h3><p>我们每次使用commit提交命令，git会生成唯一的标识符，当然它还包括提交的注释和相关内容的修改信息、通过谁可以获得我们项目完整的快照等等信息。</p>
-<p>不同于其他许多版本控制系统，git不存储已经更改的部分，它存储完整的增量信息，这样可以让我们更快地进行恢复。</p>
-<p>前面提到过使用<code>git commit -m &quot;注释&quot;</code>可以进行带注释的提交，那如果去掉<code>-m</code>的注释呢？是的。不加m选项可以直接打开默认的编辑器进行长注释的添加。值得注意的是，在这个文件中我们尽量使用标准的格式，也就是开始一段写较短的总结性的注释，接下来一段再写较长的注释。</p>
-<p><img src="https://img.imgdb.cn/item/6076e6528322e6675ce8a68b.jpg" alt="长注释"></p>
-<h4 id="什么时候该进行提交？"><a href="#什么时候该进行提交？" class="headerlink" title="什么时候该进行提交？"></a>什么时候该进行提交？</h4><p>不建议将提交的粒度分的太细，也不要过于大，这样会很难进行我们日后的修改，同样，不要尝试每天一定要提交多少次，也不要一次提交包含多个错误修复或更新。最佳的做法是当你的工作达到了你想到达的状态时，进行一次提交。</p>
-<p><img src="https://img.imgdb.cn/item/6076e7ee8322e6675cec09a1.jpg" alt="什么时候该提交"></p>
-]]></content>
-      <categories>
-        <category>知识分享</category>
-      </categories>
-      <tags>
-        <tag>git</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>建站纪念</title>
     <url>/2021/01/31/%E5%BB%BA%E7%AB%99%E7%BA%AA%E5%BF%B5/</url>
     <content><![CDATA[<p>事情的起源可能还要从那次计网课开始说起。</p>
@@ -284,6 +327,45 @@
       </categories>
       <tags>
         <tag>建站纪念</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>怎么ping命令还需要root权限？</title>
+    <url>/2021/08/06/%E6%80%8E%E4%B9%88ping%E5%91%BD%E4%BB%A4%E8%BF%98%E9%9C%80%E8%A6%81root%E6%9D%83%E9%99%90%EF%BC%9F/</url>
+    <content><![CDATA[<h2 id="事情起因"><a href="#事情起因" class="headerlink" title="事情起因"></a>事情起因</h2><p>事情的起因是这样的，由于原本的WSL Ubuntu被我给玩坏了，所以打算准备卸载了从新安装一下，正好也想尝试尝试Debian这个上游的发行版。不过在我装好之后心血来潮执行了一次ping命令之后：</p>
+<p><a href="https://pic.imgdb.cn/item/610c8f1b5132923bf840d72e.png"><img src="https://pic.imgdb.cn/item/610c8f1b5132923bf840d72e.png" alt="必须要加sudo的ping"></a></p>
+<p>奇怪了，这个命令应该是不需要提升权限的呀，为什么这次必须要加上sudo才可以执行呢？话不多说，我们先来检查一下这个命令的权限配置情况：</p>
+<p><a href="https://pic.imgdb.cn/item/610c8fb85132923bf8418f0b.png"><img src="https://pic.imgdb.cn/item/610c8fb85132923bf8418f0b.png" alt="ping的权限情况"></a></p>
+<p>蛤，这个命令所有者原来是root呀，回想下<code>passwd</code>这个命令的权限情况我们不难看出，原来是我们没有赋予<code>ping</code>这个程序<code>suid</code>权限，所以普通用户无法执行。那解决方法也很简单，就是赋予其<code>suid</code>权限即可。</p>
+<p><a href="https://pic.imgdb.cn/item/610c91125132923bf84308e9.png"><img src="https://pic.imgdb.cn/item/610c91125132923bf84308e9.png" alt="给予ping suid权限"></a></p>
+<p>可以看到，我们给了<code>suid</code>权限后（注意权限位置<code>s</code>），这个命令就可以通过普通用户执行啦。其中<code>suid</code>权限的意思是在普通用户执行的时候可以短暂获得root权限级别而不需要申请。详细的讲解可以查看这篇：<a href="http://c.biancheng.net/view/868.html">suid权限详解</a></p>
+<h2 id="进一步探索"><a href="#进一步探索" class="headerlink" title="进一步探索"></a>进一步探索</h2><p>由于我记得以前ping的时候是不需要提升权限的，于是便抱着尝试的心态看了看CentOS 7关于ping的权限情况，然鹅出大问题兄弟们。在CentOS 7或者Ubuntu20.04LTS上，这个命令是不需要root权限的，但是在检查ping程序的权限时我发现，这个命令的权限竟然没有设置<code>suid</code>位。这就很奇怪了，同样都没有设置<code>suid</code>，为社么WSL Debian的不行，但是CentOS 7和Ubuntu20.04LTS就可以执行呢？</p>
+<p>下面是Ubuntu20.04LTS的ping权限，可以看出没有<code>suid</code>权限，但是普通用户也可以执行。甚是奇怪。</p>
+<p><a href="https://pic.imgdb.cn/item/610c98935132923bf84c410a.png"><img src="https://pic.imgdb.cn/item/610c98935132923bf84c410a.png" alt="Ubuntu的ping权限"></a></p>
+<p>那既然这里和我们具体的执行权限关联似乎并不大，那说明必定在其他地方也有控制程序执行的权限。遇事不决我先<code>man</code>一下。在ping的man手册中，最后的安全部分有这么一段话：</p>
+<p><a href="https://pic.imgdb.cn/item/610c9d075132923bf8530c05.png"><img src="https://pic.imgdb.cn/item/610c9d075132923bf8530c05.png" alt="debian的man"></a></p>
+<p>首先我们已经知道了ping走的是ICMP协议，而且，各项都指出我们必须能创建ICMP套接字才可以执行此程序。那我怎么知道普通用户能否创建ICMP套接字呢？我们继续man（笑）</p>
+<blockquote>
+<p><code>man icmp</code>    (注意这是Linux Programmer’s Manual，部分发行版出场可能没有带相关的包，必须安装后才可以man到icmp)，或者可以通过Debian的Wiki进行查询：<a href="https://manpages.debian.org/buster/manpages/icmp.7.en.html">man icmp的wiki</a> 注意不要看中文版，中文版不全面。</p>
+<p><code>sudo apt install manpages</code>来进行安装。</p>
+</blockquote>
+<p>我们看看我们能发现什么。</p>
+<p>首先我们又知道了ICMP 支持通过sysctl接口来设置一些全局IP参数，并且配置文件的位置是<code>*/proc/sys/net/ipv4/*</code>.</p>
+<p><a href="https://pic.imgdb.cn/item/610ca7105132923bf8618328.png"><img src="https://pic.imgdb.cn/item/610ca7105132923bf8618328.png" alt="man icmp"></a></p>
+<p>接下来我们终于注意到什么样的用户才可以创建ICMP scokets了：</p>
+<p><a href="https://pic.imgdb.cn/item/610ca81e5132923bf8638a9f.png"><img src="https://pic.imgdb.cn/item/610ca81e5132923bf8638a9f.png" alt="man icmp2"></a></p>
+<p>这段的意思是说。允许创建 ICMP 套接字的组 ID 的范围是（包括最小和最大组 ID）。默认值为“1 0”，表示不允许任何组创建 ICMP Echo 套接字。那让我们看看我们WSL的Debian这个值是多少吧：</p>
+<p><a href="https://pic.imgdb.cn/item/610ca8cf5132923bf864a9ed.png"><img src="https://pic.imgdb.cn/item/610ca8cf5132923bf864a9ed.png" alt="查看icmp值"></a></p>
+<p>那Ubuntu的值呢？</p>
+<p><a href="https://pic.imgdb.cn/item/610ca95c5132923bf865dbba.png"><img src="https://pic.imgdb.cn/item/610ca95c5132923bf865dbba.png" alt="ubuntu的icmp值"></a></p>
+<p>这下就能说的通了，Ubuntu的值设定的是<code>0</code>到一个超大的组的值，也就是说，基本上所有的组都可以创建ICMP套接字，所以普通用户也就可以创建ICMP套接字，从而普通用户也可以执行ping命令。所以此时该命令的能否执行已经与suid权限没有太大关系了。而为什么WSL Debian只有这一个配置文件我觉的这可能与WSL有关吧。可能这些命令并没有直接调用Linux的底层而是直接走的Windows的底层，毕竟WSL Debian的这个文件夹只有这一个文件，而虚拟机中的这个文件夹可是有一堆文件的哦。当然这都是我的个人猜测。</p>
+<h2 id="我们学到了什么？"><a href="#我们学到了什么？" class="headerlink" title="我们学到了什么？"></a>我们学到了什么？</h2><p>我们来理一理我们的思路，我们一路从一个普通用户无法执行ping命令而已，一路追查到这里。我记得当初看鸟哥的书的时候，他说过一句话：学习Linux更多的时候培养的是解决问题的能力，每一个东西都是新的，同样经过这次摸索是不是觉得原来底层原来这么庞大，我们看到的只不过是冰山一隅罢了。</p>
+]]></content>
+      <categories>
+        <category>教程</category>
+      </categories>
+      <tags>
+        <tag>树莓派</tag>
       </tags>
   </entry>
   <entry>
@@ -336,49 +418,6 @@
       </categories>
       <tags>
         <tag>树莓派</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux下迁移/home分区</title>
-    <url>/2021/07/14/ArchLinux%E4%B8%8B%E8%BF%81%E7%A7%BB-home%E5%88%86%E5%8C%BA/</url>
-    <content><![CDATA[<p>由于当初安装Arch的时候为了方便，就将/home目录和根目录安装在一个分区里了。如今也用了将近快一年的Arch，很明显，/home空间不够用了。这次索性就将其直接划分出一块新的固态给其使用。摸索了一会，发现其实并不难，不过，为了演示方便，这里使用虚拟机进行演示。</p>
-<h2 id="确定好新的home分区位置并格式化"><a href="#确定好新的home分区位置并格式化" class="headerlink" title="确定好新的home分区位置并格式化"></a>确定好新的home分区位置并格式化</h2><p>比如我这里准备使用一块新的硬盘作为其新的home分区，而这一步可以使用KDE的分区管理器实现；当然如果不嫌麻烦的话也可以使用<code>fdisk</code>软件进行分区和格式化工作。不过我觉得比较麻烦（狗头）。我直接用KDE分区管理器进行新硬盘的分区和格式化工作：</p>
-<ul>
-<li><input disabled="" type="checkbox"> 之前的磁盘分配（可以看到所有的东西都被挂载在了/dev/sda硬盘中）：</li>
-</ul>
-<p><a href="https://pic.imgdb.cn/item/60ee450e5132923bf8f3b2f2.jpg"><img src="https://pic.imgdb.cn/item/60ee450e5132923bf8f3b2f2.jpg" alt="之前的磁盘分配"></a></p>
-<ul>
-<li><input checked="" disabled="" type="checkbox"> 给新的硬盘格式化为ext4分区：</li>
-</ul>
-<p><a href="https://pic.imgdb.cn/item/60ee46c55132923bf8ff2733.jpg"><img src="https://pic.imgdb.cn/item/60ee46c55132923bf8ff2733.jpg" alt="格式化新的盘后"></a></p>
-<p>可以看到，我们将要迁移/home到新的盘符为<code>/dev/sdb1</code>，格式为<code>ext4</code></p>
-<p>如果你是全新的硬盘可能需要通过软件设置新的分区表GPT，然后才能分配新的分区。</p>
-<h2 id="迁移-home分区"><a href="#迁移-home分区" class="headerlink" title="迁移/home分区"></a>迁移/home分区</h2><ul>
-<li><p>首先创建挂载点，将新建立的分区挂载到挂载点，最后将home下的所有人间备份到分区中：</p>
-<p><a href="https://pic.imgdb.cn/item/60ee48585132923bf809edec.jpg"><img src="https://pic.imgdb.cn/item/60ee48585132923bf809edec.jpg" alt="创建临时挂载点"></a></p>
-</li>
-</ul>
-<p>这里的<code>-a</code>属性的意思是复制的时候将文件的权限原封不动的复制过去。否则的话将无法登录。</p>
-<ul>
-<li><p>将原本的<code>/home</code>目录移动到<code>/home_old</code>做备份用</p>
-<p>​    <code>mv /home/* /home_old</code></p>
-</li>
-<li><p>将之前新分区挂载至home目录，并添加到fatab文件下，实现自动挂载</p>
-<p>首先编辑 <code>vim /etc/fstab</code></p>
-</li>
-</ul>
-<p><a href="https://pic.imgdb.cn/item/60ee4a5b5132923bf817d144.jpg"><img src="https://pic.imgdb.cn/item/60ee4a5b5132923bf817d144.jpg" alt="写入新的项目"></a></p>
-<p>完成后保存重启计算机。</p>
-<h2 id="重启完成之后检查"><a href="#重启完成之后检查" class="headerlink" title="重启完成之后检查"></a>重启完成之后检查</h2><p>首先如果你能重启并成功使用普通用户登录到系统，说明你已经成功了！！！我们当然还可以使用KDE分区编辑器进行查看：我们的新的硬盘已经挂载了我们的home目录。</p>
-<p><a href="https://pic.imgdb.cn/item/60ee4c055132923bf823732a.jpg"><img src="https://pic.imgdb.cn/item/60ee4c055132923bf823732a.jpg" alt="查看是否完成操作"></a></p>
-<h2 id="能否使用KDE分区编辑器完成上述所有操作？"><a href="#能否使用KDE分区编辑器完成上述所有操作？" class="headerlink" title="能否使用KDE分区编辑器完成上述所有操作？"></a>能否使用KDE分区编辑器完成上述所有操作？</h2><p>我们首先来理一下思路。我们迁移的思路不就是先将原本的<code>/home</code>分区的内容拷贝到新的盘上，然后修改挂载点嘛。细心的小伙伴可能已经发现了，在KDE分区管理器下有一个<code>编辑挂载点</code>的功能。</p>
-<p>其实完全是可以的操作，但是记得在修改挂载点之前一定要记得先将原本<code>/home</code>分区的东西先系数拷贝进去，否则，后果会非常严重。因为修改挂载点的操作是立即执行的，所以在修改前一定要记得先进行备份。</p>
-]]></content>
-      <categories>
-        <category>教程</category>
-      </categories>
-      <tags>
-        <tag>教程</tag>
       </tags>
   </entry>
 </search>

@@ -1,0 +1,198 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>怎么ping命令还需要root权限？ - 邓邓的部落格</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="部落格,"> 
+    <meta name="description" content="事情起因事情的起因是这样的，由于原本的WSL Ubuntu被我给玩坏了，所以打算准备卸载了从新安装一下，正好也想尝试尝试Debian这个上游的发行版。不过在我装好之后心血来潮执行了一次ping命令之,"> 
+    <meta name="author" content="Deng Xinhang"> 
+    <link rel="alternative" href="atom.xml" title="邓邓的部落格" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    
+    
+<link rel="stylesheet" href="/css/diaspora.css">
+
+	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads"
+        src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<body class="loading">
+    <span id="config-title" style="display:none">邓邓的部落格</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="iconfont icon-home image-icon" href="javascript:;" data-url="http://example.com"></a>
+    <div title="播放/暂停" class="iconfont icon-play"></div>
+    <h3 class="subtitle">怎么ping命令还需要root权限？</h3>
+    <div class="social">
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="iconfont icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">怎么ping命令还需要root权限？</h1>
+        <div class="stuff">
+            <span>八月 06, 2021</span>
+            
+  <ul class="post-tags-list" itemprop="keywords"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/%E6%A0%91%E8%8E%93%E6%B4%BE/" rel="tag">树莓派</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <h2 id="事情起因"><a href="#事情起因" class="headerlink" title="事情起因"></a>事情起因</h2><p>事情的起因是这样的，由于原本的WSL Ubuntu被我给玩坏了，所以打算准备卸载了从新安装一下，正好也想尝试尝试Debian这个上游的发行版。不过在我装好之后心血来潮执行了一次ping命令之后：</p>
+<p><a target="_blank" rel="noopener" href="https://pic.imgdb.cn/item/610c8f1b5132923bf840d72e.png"><img src="https://pic.imgdb.cn/item/610c8f1b5132923bf840d72e.png" alt="必须要加sudo的ping"></a></p>
+<p>奇怪了，这个命令应该是不需要提升权限的呀，为什么这次必须要加上sudo才可以执行呢？话不多说，我们先来检查一下这个命令的权限配置情况：</p>
+<p><a target="_blank" rel="noopener" href="https://pic.imgdb.cn/item/610c8fb85132923bf8418f0b.png"><img src="https://pic.imgdb.cn/item/610c8fb85132923bf8418f0b.png" alt="ping的权限情况"></a></p>
+<p>蛤，这个命令所有者原来是root呀，回想下<code>passwd</code>这个命令的权限情况我们不难看出，原来是我们没有赋予<code>ping</code>这个程序<code>suid</code>权限，所以普通用户无法执行。那解决方法也很简单，就是赋予其<code>suid</code>权限即可。</p>
+<p><a target="_blank" rel="noopener" href="https://pic.imgdb.cn/item/610c91125132923bf84308e9.png"><img src="https://pic.imgdb.cn/item/610c91125132923bf84308e9.png" alt="给予ping suid权限"></a></p>
+<p>可以看到，我们给了<code>suid</code>权限后（注意权限位置<code>s</code>），这个命令就可以通过普通用户执行啦。其中<code>suid</code>权限的意思是在普通用户执行的时候可以短暂获得root权限级别而不需要申请。详细的讲解可以查看这篇：<a target="_blank" rel="noopener" href="http://c.biancheng.net/view/868.html">suid权限详解</a></p>
+<h2 id="进一步探索"><a href="#进一步探索" class="headerlink" title="进一步探索"></a>进一步探索</h2><p>由于我记得以前ping的时候是不需要提升权限的，于是便抱着尝试的心态看了看CentOS 7关于ping的权限情况，然鹅出大问题兄弟们。在CentOS 7或者Ubuntu20.04LTS上，这个命令是不需要root权限的，但是在检查ping程序的权限时我发现，这个命令的权限竟然没有设置<code>suid</code>位。这就很奇怪了，同样都没有设置<code>suid</code>，为社么WSL Debian的不行，但是CentOS 7和Ubuntu20.04LTS就可以执行呢？</p>
+<p>下面是Ubuntu20.04LTS的ping权限，可以看出没有<code>suid</code>权限，但是普通用户也可以执行。甚是奇怪。</p>
+<p><a target="_blank" rel="noopener" href="https://pic.imgdb.cn/item/610c98935132923bf84c410a.png"><img src="https://pic.imgdb.cn/item/610c98935132923bf84c410a.png" alt="Ubuntu的ping权限"></a></p>
+<p>那既然这里和我们具体的执行权限关联似乎并不大，那说明必定在其他地方也有控制程序执行的权限。遇事不决我先<code>man</code>一下。在ping的man手册中，最后的安全部分有这么一段话：</p>
+<p><a target="_blank" rel="noopener" href="https://pic.imgdb.cn/item/610c9d075132923bf8530c05.png"><img src="https://pic.imgdb.cn/item/610c9d075132923bf8530c05.png" alt="debian的man"></a></p>
+<p>首先我们已经知道了ping走的是ICMP协议，而且，各项都指出我们必须能创建ICMP套接字才可以执行此程序。那我怎么知道普通用户能否创建ICMP套接字呢？我们继续man（笑）</p>
+<blockquote>
+<p><code>man icmp</code>    (注意这是Linux Programmer’s Manual，部分发行版出场可能没有带相关的包，必须安装后才可以man到icmp)，或者可以通过Debian的Wiki进行查询：<a target="_blank" rel="noopener" href="https://manpages.debian.org/buster/manpages/icmp.7.en.html">man icmp的wiki</a> 注意不要看中文版，中文版不全面。</p>
+<p><code>sudo apt install manpages</code>来进行安装。</p>
+</blockquote>
+<p>我们看看我们能发现什么。</p>
+<p>首先我们又知道了ICMP 支持通过sysctl接口来设置一些全局IP参数，并且配置文件的位置是<code>*/proc/sys/net/ipv4/*</code>.</p>
+<p><a target="_blank" rel="noopener" href="https://pic.imgdb.cn/item/610ca7105132923bf8618328.png"><img src="https://pic.imgdb.cn/item/610ca7105132923bf8618328.png" alt="man icmp"></a></p>
+<p>接下来我们终于注意到什么样的用户才可以创建ICMP scokets了：</p>
+<p><a target="_blank" rel="noopener" href="https://pic.imgdb.cn/item/610ca81e5132923bf8638a9f.png"><img src="https://pic.imgdb.cn/item/610ca81e5132923bf8638a9f.png" alt="man icmp2"></a></p>
+<p>这段的意思是说。允许创建 ICMP 套接字的组 ID 的范围是（包括最小和最大组 ID）。默认值为“1 0”，表示不允许任何组创建 ICMP Echo 套接字。那让我们看看我们WSL的Debian这个值是多少吧：</p>
+<p><a target="_blank" rel="noopener" href="https://pic.imgdb.cn/item/610ca8cf5132923bf864a9ed.png"><img src="https://pic.imgdb.cn/item/610ca8cf5132923bf864a9ed.png" alt="查看icmp值"></a></p>
+<p>那Ubuntu的值呢？</p>
+<p><a target="_blank" rel="noopener" href="https://pic.imgdb.cn/item/610ca95c5132923bf865dbba.png"><img src="https://pic.imgdb.cn/item/610ca95c5132923bf865dbba.png" alt="ubuntu的icmp值"></a></p>
+<p>这下就能说的通了，Ubuntu的值设定的是<code>0</code>到一个超大的组的值，也就是说，基本上所有的组都可以创建ICMP套接字，所以普通用户也就可以创建ICMP套接字，从而普通用户也可以执行ping命令。所以此时该命令的能否执行已经与suid权限没有太大关系了。而为什么WSL Debian只有这一个配置文件我觉的这可能与WSL有关吧。可能这些命令并没有直接调用Linux的底层而是直接走的Windows的底层，毕竟WSL Debian的这个文件夹只有这一个文件，而虚拟机中的这个文件夹可是有一堆文件的哦。当然这都是我的个人猜测。</p>
+<h2 id="我们学到了什么？"><a href="#我们学到了什么？" class="headerlink" title="我们学到了什么？"></a>我们学到了什么？</h2><p>我们来理一理我们的思路，我们一路从一个普通用户无法执行ping命令而已，一路追查到这里。我记得当初看鸟哥的书的时候，他说过一句话：学习Linux更多的时候培养的是解决问题的能力，每一个东西都是新的，同样经过这次摸索是不是觉得原来底层原来这么庞大，我们看到的只不过是冰山一隅罢了。</p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+		data-enable='false'
+        data-ae='false'
+        data-ci=''
+        data-cs=''
+        data-r=''
+        data-o=''
+        data-a=''
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+        <div class='side'>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8B%E6%83%85%E8%B5%B7%E5%9B%A0"><span class="toc-number">1.</span> <span class="toc-text">事情起因</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E4%B8%80%E6%AD%A5%E6%8E%A2%E7%B4%A2"><span class="toc-number">2.</span> <span class="toc-text">进一步探索</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%88%91%E4%BB%AC%E5%AD%A6%E5%88%B0%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">3.</span> <span class="toc-text">我们学到了什么？</span></a></li></ol>	
+        </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+
+
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/typed.js"></script>
+<script src="/js/diaspora.js"></script>
+
+
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+
+
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</html>
