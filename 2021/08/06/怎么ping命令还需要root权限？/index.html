@@ -88,7 +88,9 @@
 <p><a target="_blank" rel="noopener" href="https://pic.imgdb.cn/item/610ca8cf5132923bf864a9ed.png"><img src="https://pic.imgdb.cn/item/610ca8cf5132923bf864a9ed.png" alt="查看icmp值"></a></p>
 <p>那Ubuntu的值呢？</p>
 <p><a target="_blank" rel="noopener" href="https://pic.imgdb.cn/item/610ca95c5132923bf865dbba.png"><img src="https://pic.imgdb.cn/item/610ca95c5132923bf865dbba.png" alt="ubuntu的icmp值"></a></p>
-<p>这下就能说的通了，Ubuntu的值设定的是<code>0</code>到一个超大的组的值，也就是说，基本上所有的组都可以创建ICMP套接字，所以普通用户也就可以创建ICMP套接字，从而普通用户也可以执行ping命令。所以此时该命令的能否执行已经与suid权限没有太大关系了。而为什么WSL Debian只有这一个配置文件我觉的这可能与WSL有关吧。可能这些命令并没有直接调用Linux的底层而是直接走的Windows的底层，毕竟WSL Debian的这个文件夹只有这一个文件，而虚拟机中的这个文件夹可是有一堆文件的哦。当然这都是我的个人猜测。</p>
+<p>这下就能说的通了，Ubuntu的值设定的是<code>0</code>到一个超大的组的值，也就是说，基本上所有的组都可以创建ICMP套接字，所以普通用户也就可以创建ICMP套接字，从而普通用户也可以执行ping命令。所以此时该命令的能否执行已经与suid权限没有太大关系了。</p>
+<h3 id="所以说ip-forward又是什么？"><a href="#所以说ip-forward又是什么？" class="headerlink" title="所以说ip_forward又是什么？"></a>所以说ip_forward又是什么？</h3><p>如同<code>ping_group_range</code>是Linux内核提供的，这个转发数据包的能力也是Linux内核所提供的。我们知道在局域网络里面的主机可以透过广播的方式来进行网络封包的传送，但在不同网段内的主机想要互相联机时，就得要透过路由器了。既然主机想要将数据传送到不同的网域时得透过路由器的帮忙，所以，路由器的主要功能就是：“转递网络封包“嘛！也就是说，路由器会分析来源端封包的  IP 表头，在表头内找出要送达的目标 IP 后，透过路由器本身的路由表 (routing table) 来将这个封包向下一个目标 (next  hop) 传送。这也就是路由器的功能。</p>
+<p>而为什么WSL  Debian只有这一个配置文件我觉的这可能与WSL1有关吧。可能这些命令并没有直接调用Linux的底层而是直接走的Windows的底层，毕竟WSL Debian的这个文件夹只有这一个文件，而虚拟机中的这个文件夹可是有一堆文件的哦。当然这都是我的个人猜测。</p>
 <h2 id="我们学到了什么？"><a href="#我们学到了什么？" class="headerlink" title="我们学到了什么？"></a>我们学到了什么？</h2><p>我们来理一理我们的思路，我们一路从一个普通用户无法执行ping命令而已，一路追查到这里。我记得当初看鸟哥的书的时候，他说过一句话：学习Linux更多的时候培养的是解决问题的能力，每一个东西都是新的，同样经过这次摸索是不是觉得原来底层原来这么庞大，我们看到的只不过是冰山一隅罢了。</p>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
@@ -117,7 +119,7 @@
     </div>
     
         <div class='side'>
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8B%E6%83%85%E8%B5%B7%E5%9B%A0"><span class="toc-number">1.</span> <span class="toc-text">事情起因</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E4%B8%80%E6%AD%A5%E6%8E%A2%E7%B4%A2"><span class="toc-number">2.</span> <span class="toc-text">进一步探索</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%88%91%E4%BB%AC%E5%AD%A6%E5%88%B0%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">3.</span> <span class="toc-text">我们学到了什么？</span></a></li></ol>	
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8B%E6%83%85%E8%B5%B7%E5%9B%A0"><span class="toc-number">1.</span> <span class="toc-text">事情起因</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E4%B8%80%E6%AD%A5%E6%8E%A2%E7%B4%A2"><span class="toc-number">2.</span> <span class="toc-text">进一步探索</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%80%E4%BB%A5%E8%AF%B4ip-forward%E5%8F%88%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">2.1.</span> <span class="toc-text">所以说ip_forward又是什么？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%88%91%E4%BB%AC%E5%AD%A6%E5%88%B0%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">3.</span> <span class="toc-text">我们学到了什么？</span></a></li></ol>	
         </div>
     
 </div>
