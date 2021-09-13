@@ -3,26 +3,26 @@
   <entry>
     <title>ArchLinux下搭建Arm交叉编译环境</title>
     <url>/2021/04/27/ArchLinux%E4%B8%8B%E6%90%AD%E5%BB%BAArm%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83/</url>
-    <content><![CDATA[<p>这学期新开了一门Arm嵌入式，由于开发板不具备资自主编译的能力，所以必须搭建交叉编译环境。当然，交叉编译环境的主编译机器以Linux为佳，而我的主机恰好是Arch，原本以为在Arch上的交叉编译环境的搭建会轻松很多，然而事实是确实经历了一番坎坷的旅程，最终在群友的协助下完成了环境的搭建，故记录此过程以供大家参考。</p>
+    <content><![CDATA[<html><head></head><body><p>这学期新开了一门Arm嵌入式，由于开发板不具备资自主编译的能力，所以必须搭建交叉编译环境。当然，交叉编译环境的主编译机器以Linux为佳，而我的主机恰好是Arch，原本以为在Arch上的交叉编译环境的搭建会轻松很多，然而事实是确实经历了一番坎坷的旅程，最终在群友的协助下完成了环境的搭建，故记录此过程以供大家参考。</p>
 <h2 id="环境说明："><a href="#环境说明：" class="headerlink" title="环境说明："></a>环境说明：</h2><h3 id="编译环境："><a href="#编译环境：" class="headerlink" title="编译环境："></a>编译环境：</h3><p>Arch Linux x86_64</p>
 <p><img src="https://img.imgdb.cn/item/60875dbfd1a9ae528ff67194.jpg" alt="系统环境说明"></p>
 <h3 id="运行环境："><a href="#运行环境：" class="headerlink" title="运行环境："></a>运行环境：</h3><p>ARM926EJ-5</p>
 <p><img src="https://img.imgdb.cn/item/60875eb0d1a9ae528ffd083c.jpg" alt="运行环境"></p>
 <p>很显然，我们的编译环境是64位的操作系统，运行时环境是32位的arm架构的机器。我们的思路也很简单，就是如果你想在开发板上运行程序，先在自己的主机上用arm-linux-gcc进行编译，再拿到开发板上去运行。</p>
 <h2 id="准备工作1——启用-multilib-和Octopi"><a href="#准备工作1——启用-multilib-和Octopi" class="headerlink" title="准备工作1——启用 [multilib] 和Octopi"></a>准备工作1——启用 [multilib] 和Octopi</h2><h3 id="启用multilib"><a href="#启用multilib" class="headerlink" title="启用multilib"></a>启用multilib</h3><p>首先我们编辑我们的ArchLinux镜像文件，启用被注释的<code>[multilib]</code>镜像源，并且更新系统。这一步的目的是由于在64位的机器上编译32位的应用程序，可能会出现找不到32位的库的情况，这个库包含了大量的32位的库文件。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo vim &#x2F;etc&#x2F;pacman.conf	#编辑镜像文件</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">sudo vim /etc/pacman.conf	#编辑镜像文件</span><br></pre></td></tr></tbody></table></figure>
 <p><img src="https://img.imgdb.cn/item/60876289d1a9ae528f19720b.jpg" alt="启用multilib库"></p>
 <p>接着更新我们的系统：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo pacman -Syu	#更新系统</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">sudo pacman -Syu	#更新系统</span><br></pre></td></tr></tbody></table></figure>
 <h3 id="使用Octopi（可选）"><a href="#使用Octopi（可选）" class="headerlink" title="使用Octopi（可选）"></a>使用Octopi（可选）</h3><p>我们知道，Arch Linux下默认是没有包管理器的，操作基本上是由<code>pacman</code>这个十分强大的包管理器完成。而<code>Octopi</code>这个包管理器可以很方便的，以图形话的方式查找到我们想要的软件包。你可以使用AUR去安装它：(如果没有<code>yay</code>的话请先安装这个AUR的管理器)</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yay -S octopi	#通过AUR安装octopi</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">yay -S octopi	#通过AUR安装octopi</span><br></pre></td></tr></tbody></table></figure>
 <h2 id="准备工作2——下载arm-linux-gcc"><a href="#准备工作2——下载arm-linux-gcc" class="headerlink" title="准备工作2——下载arm-linux-gcc"></a>准备工作2——下载<code>arm-linux-gcc</code></h2><p>搜索后发现，网上最多人安装的还是<code>arm-linux-gcc</code>交叉编译器。适合小型的、环境不是特别新的嵌入式环境。这里我已经下载好了，可以直接提取：</p>
 <p><a href="https://pan.baidu.com/s/14wvacgfr4rAIGxTK2QYM6w">下载arm-linux-gcc</a> 密码：gieq</p>
 <p>下载完成后解压到<code>/opt</code>目录下：（以图形的文件浏览器看就是多了一个FriendlyARM的文件夹）</p>
 <p>接下来将<code>arm-linux-gcc</code>添加到环境变量，首先我们编辑<code>～/.zshrc文件</code></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo vim ~&#x2F;.zshrc</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">sudo vim ~/.zshrc</span><br></pre></td></tr></tbody></table></figure>
 <p>在最下方添加如下字段，即就是将<code>/opt/FriendlyARM</code>下的bin目录到环境变量。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">export PATH&#x3D;&#x2F;opt&#x2F;FriendlyARM&#x2F;toolschain&#x2F;4.4.3&#x2F;bin&#x2F;:$PATH</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">export PATH=/opt/FriendlyARM/toolschain/4.4.3/bin/:$PATH</span><br></pre></td></tr></tbody></table></figure>
 <p>保存退出后执行<code> source ~/.zshrc</code>以立即生效环境变量。这样使用<code>arm-linux-gcc -v</code>查看安装的编译器版本。</p>
 <p><img src="https://img.imgdb.cn/item/60876aced1a9ae528f6778aa.jpg" alt="插看其版本"></p>
 <h2 id="准备工作3——安装缺少的包文件"><a href="#准备工作3——安装缺少的包文件" class="headerlink" title="准备工作3——安装缺少的包文件"></a>准备工作3——安装缺少的包文件</h2><p>当我们使用<code>arm-linux-gcc</code>去编译我们的c++或c程序时会提示缺少某一个库文件，好的，那么这个库文件在哪里？首先我们可以直接去<code>Octopi</code>包管理器去找有没有这个库，比如我要找<code>libstdc++5</code>这个库，或者<code>lib32-glibc</code>这个库，都可以直接去octopi上查找。它很方便的一个功能就是模糊查找，而且速度较快。</p>
@@ -35,7 +35,7 @@
 <p>编译就不必我多讲了，写一个hello，是而运行的话呢，必须先将文件拷贝到单片机下再运行</p>
 <p><img src="https://img.imgdb.cn/item/60876fe8d1a9ae528f8efed8.jpg" alt="编译"></p>
 <p><img src="https://img.imgdb.cn/item/60877073d1a9ae528f929ced.png" alt="运行测试"></p>
-]]></content>
+</body></html>]]></content>
       <categories>
         <category>教程</category>
       </categories>
@@ -46,7 +46,7 @@
   <entry>
     <title>Linux下迁移/home分区</title>
     <url>/2021/07/14/ArchLinux%E4%B8%8B%E8%BF%81%E7%A7%BB-home%E5%88%86%E5%8C%BA/</url>
-    <content><![CDATA[<p>由于当初安装Arch的时候为了方便，就将/home目录和根目录安装在一个分区里了。如今也用了将近快一年的Arch，很明显，/home空间不够用了。这次索性就将其直接划分出一块新的固态给其使用。摸索了一会，发现其实并不难，不过，为了演示方便，这里使用虚拟机进行演示。</p>
+    <content><![CDATA[<html><head></head><body><p>由于当初安装Arch的时候为了方便，就将/home目录和根目录安装在一个分区里了。如今也用了将近快一年的Arch，很明显，/home空间不够用了。这次索性就将其直接划分出一块新的固态给其使用。摸索了一会，发现其实并不难，不过，为了演示方便，这里使用虚拟机进行演示。</p>
 <h2 id="确定好新的home分区位置并格式化"><a href="#确定好新的home分区位置并格式化" class="headerlink" title="确定好新的home分区位置并格式化"></a>确定好新的home分区位置并格式化</h2><p>比如我这里准备使用一块新的硬盘作为其新的home分区，而这一步可以使用KDE的分区管理器实现；当然如果不嫌麻烦的话也可以使用<code>fdisk</code>软件进行分区和格式化工作。不过我觉得比较麻烦（狗头）。我直接用KDE分区管理器进行新硬盘的分区和格式化工作：</p>
 <ul>
 <li><input disabled="" type="checkbox"> 之前的磁盘分配（可以看到所有的东西都被挂载在了/dev/sda硬盘中）：</li>
@@ -78,7 +78,7 @@
 <p><a href="https://pic.imgdb.cn/item/60ee4c055132923bf823732a.jpg"><img src="https://pic.imgdb.cn/item/60ee4c055132923bf823732a.jpg" alt="查看是否完成操作"></a></p>
 <h2 id="能否使用KDE分区编辑器完成上述所有操作？"><a href="#能否使用KDE分区编辑器完成上述所有操作？" class="headerlink" title="能否使用KDE分区编辑器完成上述所有操作？"></a>能否使用KDE分区编辑器完成上述所有操作？</h2><p>我们首先来理一下思路。我们迁移的思路不就是先将原本的<code>/home</code>分区的内容拷贝到新的盘上，然后修改挂载点嘛。细心的小伙伴可能已经发现了，在KDE分区管理器下有一个<code>编辑挂载点</code>的功能。</p>
 <p>其实完全是可以的操作，但是记得在修改挂载点之前一定要记得先将原本<code>/home</code>分区的东西先系数拷贝进去，否则，后果会非常严重。因为修改挂载点的操作是立即执行的，所以在修改前一定要记得先进行备份。</p>
-]]></content>
+</body></html>]]></content>
       <categories>
         <category>教程</category>
       </categories>
@@ -89,7 +89,7 @@
   <entry>
     <title>IDEA+Tomcat+JSP+MariaDB的开发环境搭建</title>
     <url>/2021/04/16/IDEA-Tomcat-JSP-MariaDB%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</url>
-    <content><![CDATA[<p>因为最近的实验是结合JSP与数据库做课程实验，而老师给的开发环境不知是什么时代的上古工具；又因为自己的平台有些特殊，配置方面遇到了一些小问题，网上也没有可靠的解决方法，故进行一次记录。</p>
+    <content><![CDATA[<html><head></head><body><p>因为最近的实验是结合JSP与数据库做课程实验，而老师给的开发环境不知是什么时代的上古工具；又因为自己的平台有些特殊，配置方面遇到了一些小问题，网上也没有可靠的解决方法，故进行一次记录。</p>
 <h2 id="环境说明："><a href="#环境说明：" class="headerlink" title="环境说明："></a>环境说明：</h2><p>操作系统：Arch Linux</p>
 <p>Tomcat版本：Tomcat9</p>
 <p>数据库版本：MariaDB 10.5.9</p>
@@ -125,13 +125,13 @@
 <p>选择刚刚存放jar的文件，接着勾选上即可：</p>
 <p><img src="https://img.imgdb.cn/item/60792afe8322e6675cc484d7.jpg" alt="选择jar包"></p>
 <h3 id="在JSP页面中测试连接"><a href="#在JSP页面中测试连接" class="headerlink" title="在JSP页面中测试连接"></a>在JSP页面中测试连接</h3><p>在IDEA的<code>index.jsp</code>页面写入以下内容：（注意区分你的表和我的表的不同之处）</p>
-<figure class="highlight"><table><tr><td class="code"><pre><span class="line">&lt;%@ page contentType=<span class="string">&quot;text/html;charset=UTF-8&quot;</span> language=<span class="string">&quot;java&quot;</span> %&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt;连接数据库&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;h3&gt;测试连接数据库&lt;/h3&gt;</span><br><span class="line">&lt;%<span class="meta">@page</span> <span class="keyword">import</span>=<span class="string">&quot;java.sql.*&quot;</span> %&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&lt;%</span><br><span class="line">    String DRIVER_PATH = <span class="string">&quot;org.mariadb.jdbc.Driver&quot;</span>; <span class="comment">//驱动路径</span></span><br><span class="line">    String URL = <span class="string">&quot;jdbc:mysql://localhost:3306/MyStudent?serverTimezone=GMT&quot;</span>; <span class="comment">//包括数据库的名称MyStudent</span></span><br><span class="line">    String USER_NAME = <span class="string">&quot;knosql&quot;</span>;      <span class="comment">//数据库用户名</span></span><br><span class="line">    String PASSWORD = <span class="string">&quot;76KLOP&quot;</span>;     <span class="comment">//数据库密码</span></span><br><span class="line">    Connection con = <span class="keyword">null</span>;</span><br><span class="line">    PreparedStatement preparedStatement = <span class="keyword">null</span>;</span><br><span class="line">    ResultSet resultSet = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        Class.forName(DRIVER_PATH);</span><br><span class="line">        con = DriverManager.getConnection(URL, USER_NAME, PASSWORD);</span><br><span class="line">        System.out.println(con);</span><br><span class="line">        <span class="comment">//      判断数据库是否连接成功</span></span><br><span class="line">        <span class="keyword">if</span> (con != <span class="keyword">null</span>) &#123;</span><br><span class="line">            out.println(<span class="string">&quot;数据库连接成功&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            out.println(<span class="string">&quot;数据库连接失败&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        String sql = <span class="string">&quot;SELECT * FROM jspdb&quot;</span>;	<span class="comment">//包括数据库的表的名称</span></span><br><span class="line"></span><br><span class="line">        preparedStatement = con.prepareStatement(sql);</span><br><span class="line">        resultSet = preparedStatement.executeQuery();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">%&gt;</span><br><span class="line"></span><br><span class="line">&lt;%</span><br><span class="line">    <span class="comment">//打印获取到的数据库的内容</span></span><br><span class="line">    <span class="keyword">while</span> (resultSet.next()) &#123;</span><br><span class="line">%&gt;</span><br><span class="line"></span><br><span class="line">&lt;p&gt;商品名称:&lt;% out.print(resultSet.getString(&quot;goodsname&quot;));%&gt;&lt;/p&gt;</span><br><span class="line">&lt;p&gt;商品价格:&lt;%=resultSet.getString(<span class="string">&quot;prise&quot;</span>)%&gt;</span><br><span class="line">&lt;/p&gt;</span><br><span class="line">&lt;hr&gt;</span><br><span class="line">&lt;%</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//关闭数据库</span></span><br><span class="line">    resultSet.close();</span><br><span class="line">    preparedStatement.close();</span><br><span class="line">%&gt;</span><br><span class="line"></span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight"><table><tbody><tr><td class="code"><pre><span class="line">&lt;%@ page contentType=<span class="string">"text/html;charset=UTF-8"</span> language=<span class="string">"java"</span> %&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt;连接数据库&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;h3&gt;测试连接数据库&lt;/h3&gt;</span><br><span class="line">&lt;%<span class="meta">@page</span> <span class="keyword">import</span>=<span class="string">"java.sql.*"</span> %&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&lt;%</span><br><span class="line">    String DRIVER_PATH = <span class="string">"org.mariadb.jdbc.Driver"</span>; <span class="comment">//驱动路径</span></span><br><span class="line">    String URL = <span class="string">"jdbc:mysql://localhost:3306/MyStudent?serverTimezone=GMT"</span>; <span class="comment">//包括数据库的名称MyStudent</span></span><br><span class="line">    String USER_NAME = <span class="string">"knosql"</span>;      <span class="comment">//数据库用户名</span></span><br><span class="line">    String PASSWORD = <span class="string">"76KLOP"</span>;     <span class="comment">//数据库密码</span></span><br><span class="line">    Connection con = <span class="keyword">null</span>;</span><br><span class="line">    PreparedStatement preparedStatement = <span class="keyword">null</span>;</span><br><span class="line">    ResultSet resultSet = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span> {</span><br><span class="line">        Class.forName(DRIVER_PATH);</span><br><span class="line">        con = DriverManager.getConnection(URL, USER_NAME, PASSWORD);</span><br><span class="line">        System.out.println(con);</span><br><span class="line">        <span class="comment">//      判断数据库是否连接成功</span></span><br><span class="line">        <span class="keyword">if</span> (con != <span class="keyword">null</span>) {</span><br><span class="line">            out.println(<span class="string">"数据库连接成功"</span>);</span><br><span class="line">        } <span class="keyword">else</span> {</span><br><span class="line">            out.println(<span class="string">"数据库连接失败"</span>);</span><br><span class="line">        }</span><br><span class="line">        String sql = <span class="string">"SELECT * FROM jspdb"</span>;	<span class="comment">//包括数据库的表的名称</span></span><br><span class="line"></span><br><span class="line">        preparedStatement = con.prepareStatement(sql);</span><br><span class="line">        resultSet = preparedStatement.executeQuery();</span><br><span class="line">    } <span class="keyword">catch</span> (Exception e) {</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    }</span><br><span class="line">%&gt;</span><br><span class="line"></span><br><span class="line">&lt;%</span><br><span class="line">    <span class="comment">//打印获取到的数据库的内容</span></span><br><span class="line">    <span class="keyword">while</span> (resultSet.next()) {</span><br><span class="line">%&gt;</span><br><span class="line"></span><br><span class="line">&lt;p&gt;商品名称:&lt;% out.print(resultSet.getString("goodsname"));%&gt;&lt;/p&gt;</span><br><span class="line">&lt;p&gt;商品价格:&lt;%=resultSet.getString(<span class="string">"prise"</span>)%&gt;</span><br><span class="line">&lt;/p&gt;</span><br><span class="line">&lt;hr&gt;</span><br><span class="line">&lt;%</span><br><span class="line">    }</span><br><span class="line">    <span class="comment">//关闭数据库</span></span><br><span class="line">    resultSet.close();</span><br><span class="line">    preparedStatement.close();</span><br><span class="line">%&gt;</span><br><span class="line"></span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></tbody></table></figure>
 <p>注意我们MariaDB的数据库驱动路径的写法是：<code>org.mariadb.jdbc.Driver</code></p>
 <p>而如果你使用的是MySQL数据库的驱动路径的写法应该是：<code>com.mysql.jdbc.Driver</code></p>
 <p>如果测试成功的话，我们点击浏览器图标就可以看到连接后的结果啦：</p>
 <p><img src="https://img.imgdb.cn/item/60792cd08322e6675cc7d775.jpg" alt="数据库的连接结果"></p>
 <p>使用MariaDB的一个好处就是，它与MySQL的数据库驱动是兼容的，而且官方也进行了开源，我们可以直在IDEA的jar文件处点击小三角箭头查看其源代码。</p>
-]]></content>
+</body></html>]]></content>
       <categories>
         <category>教程</category>
       </categories>
@@ -142,43 +142,43 @@
   <entry>
     <title>使用树莓派和samba搭建个人NAS</title>
     <url>/2021/02/06/%E4%BD%BF%E7%94%A8%E6%A0%91%E8%8E%93%E6%B4%BE%E5%92%8Csamba%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BANAS/</url>
-    <content><![CDATA[<p>我们知道如果想要共享文件，在Linux对Linux的环境下，最简单的方法就是通过NIS了；而Windows对Windows，最简单的方法则是“网上邻居”。那如果局域网中既有Windows也有Linux而且想要共享文件系统的话，那该怎么办？</p>
+    <content><![CDATA[<html><head></head><body><p>我们知道如果想要共享文件，在Linux对Linux的环境下，最简单的方法就是通过NIS了；而Windows对Windows，最简单的方法则是“网上邻居”。那如果局域网中既有Windows也有Linux而且想要共享文件系统的话，那该怎么办？</p>
 <p>那就使用SAMBA服务器好了。</p>
 <p>SAMBA可以让Linux加入Windows的网上邻居支持，让不同的平台可以共享文件系统，非常好用。而且它的配置极其简单。</p>
 <h3 id="环境简介"><a href="#环境简介" class="headerlink" title="环境简介"></a>环境简介</h3><p>使用树莓派的系统如下所示，基于的是Debian的64位的操作系统：</p>
 <p><a href="https://imgchr.com/i/yY6Zod"><img src="https://s3.ax1x.com/2021/02/06/yY6Zod.png" alt="系统信息"></a></p>
 <p><strong>提示：</strong> 由于树莓派每次接入局域网时，路由器给分配的IP不固定，所以建议提前在路由器的管理页面进行树莓派的硬件MAC与IP地址的绑定。这样每次树莓派连接到路由器都会给分配一个固定的IP.</p>
-<h3 id="安装Samba和配套软件"><a href="#安装Samba和配套软件" class="headerlink" title="安装Samba和配套软件"></a>安装Samba和配套软件</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">sudo apt install samba samba-common-<span class="built_in">bin</span></span><br></pre></td></tr></table></figure>
+<h3 id="安装Samba和配套软件"><a href="#安装Samba和配套软件" class="headerlink" title="安装Samba和配套软件"></a>安装Samba和配套软件</h3><figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">sudo apt install samba samba-common-<span class="built_in">bin</span></span><br></pre></td></tr></tbody></table></figure>
 <p>期间会有此选项选择是即可</p>
 <h3 id="配置Samba并指定共享的目录"><a href="#配置Samba并指定共享的目录" class="headerlink" title="配置Samba并指定共享的目录"></a>配置Samba并指定共享的目录</h3><p>samba的配置文件路径为：<code>/etc/samba/smb.conf</code>，可以使用<code>nano</code>或<code>vim</code>编辑器编辑此文件：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">sudo nano /etc/samba/smb.conf</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">sudo nano /etc/samba/smb.conf</span><br></pre></td></tr></tbody></table></figure>
 <p>在最后添加自己的配置：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[Shared]</span><br><span class="line">   path &#x3D; &#x2F;media&#x2F;pi #要共享文件夹的路径</span><br><span class="line">   valid users &#x3D; pi	#允许的用户</span><br><span class="line">   browseable &#x3D; yes	#浏览及写入的权限</span><br><span class="line">   writable &#x3D; yes	</span><br><span class="line">   read only &#x3D; no</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">[Shared]</span><br><span class="line">   path = /media/pi #要共享文件夹的路径</span><br><span class="line">   valid users = pi	#允许的用户</span><br><span class="line">   browseable = yes	#浏览及写入的权限</span><br><span class="line">   writable = yes	</span><br><span class="line">   read only = no</span><br></pre></td></tr></tbody></table></figure>
 <p>如果要共享的文件夹很多的话，也可以添加多个自己的配置。</p>
 <p>如果要共享的是外置硬盘，位置是<code>/media/pi</code></p>
 <p>编辑完成之后，我们可以对写入的信息进行测试，防止出错：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">testparm</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">testparm</span><br></pre></td></tr></tbody></table></figure>
 <p>如果没有提示错误信息，就表示写入的格式正确。</p>
 <p><a href="https://imgchr.com/i/yYgSv6"><img src="https://s3.ax1x.com/2021/02/06/yYgSv6.png" alt="测试写入的是否正确"></a></p>
 <h3 id="为samba分配可访问的用户并启动此服务"><a href="#为samba分配可访问的用户并启动此服务" class="headerlink" title="为samba分配可访问的用户并启动此服务"></a>为samba分配可访问的用户并启动此服务</h3><p>设置加入共享的用户pi并设置密码（此密码用于samba登陆，可以与pi用户原本的密码不一致）</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">sudo smbpasswd -a pi</span><br></pre></td></tr></table></figure>
-<p><a href="https://imgchr.com/i/yYgRsK"><img src="https://s3.ax1x.com/2021/02/06/yYgRsK.png" alt="给samba分配可访问的用户pi" style="zoom: 67%;" /></a></p>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">sudo smbpasswd -a pi</span><br></pre></td></tr></tbody></table></figure>
+<p><a href="https://imgchr.com/i/yYgRsK"><img src="https://s3.ax1x.com/2021/02/06/yYgRsK.png" alt="给samba分配可访问的用户pi" style="zoom: 67%;"></a></p>
 <p>到此samba的配置工作可以说完成啦。</p>
 <p>接下来我们启动samba服务：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">sudo systemctl start smbd</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">sudo systemctl start smbd</span><br></pre></td></tr></tbody></table></figure>
 <p>查看samba服务状态：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">systemctl status smbd</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">systemctl status smbd</span><br></pre></td></tr></tbody></table></figure>
 <p>如果显示绿色running表示服务已经正常启动并运行啦：</p>
 <p><a href="https://imgchr.com/i/yta1BR"><img src="https://s3.ax1x.com/2021/02/07/yta1BR.png" alt="查看samba状态"></a></p>
 <h3 id="Linux用户访问文件服务"><a href="#Linux用户访问文件服务" class="headerlink" title="Linux用户访问文件服务"></a>Linux用户访问文件服务</h3><p>以KDE桌面环境为例，可以直接在地址栏输入以下格式的地址就可以看到我们设置的共享文件夹或磁盘啦：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">smb:/你的树莓派IP地址</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">smb:/你的树莓派IP地址</span><br></pre></td></tr></tbody></table></figure>
 <p><a href="https://imgchr.com/i/yY2znK"><img src="https://s3.ax1x.com/2021/02/06/yY2znK.png" alt="Linux用户登陆"></a></p>
 <p>我们还可以将这个共享的地址固定到侧边栏，方便日后直接访问。可以在侧边栏的 <strong><em>远程</em></strong> 选项右键-&gt;<strong><em>添加位置</em></strong> ，配置好后即可快速访问。</p>
 <h3 id="Windows用户访问"><a href="#Windows用户访问" class="headerlink" title="Windows用户访问"></a>Windows用户访问</h3><p>Windows用户可以直接在 <em>此电脑</em> 右键，选择 <em>映射网络驱动器</em> 填写好格式后即可访问。这里注意必须填写正确的格式及共享文件夹的名称。</p>
 <p>Windows添加后下次打开此电脑会发现共享的文件夹已经固定在了下面。</p>
 <p><a href="https://imgchr.com/i/yYRovt"><img src="https://s3.ax1x.com/2021/02/06/yYRovt.png" alt="Windows用户"></a></p>
 <h3 id="防踩坑指南"><a href="#防踩坑指南" class="headerlink" title="防踩坑指南"></a>防踩坑指南</h3><p>第一次配置时我们会发现，明明配置好了，打开网络都能看到我们的这个文件夹了，但为什么就是看不到我插入的硬盘或U盘呢？其实，如果你的树莓派当初选择的是带桌面启动的模式，此服务必须在进入桌面后才可以生效。使用VNC登陆进树莓派即可。如果是家用则完全可以设置树莓派是开机自动以pi用户自动登录，实现此服务插电即用。</p>
-]]></content>
+</body></html>]]></content>
       <categories>
         <category>教程</category>
       </categories>
@@ -189,7 +189,7 @@
   <entry>
     <title>使用树莓派搭建Aria2下载服务器</title>
     <url>/2021/02/25/%E4%BD%BF%E7%94%A8%E6%A0%91%E8%8E%93%E6%B4%BE%E6%90%AD%E5%BB%BAAria2%E4%B8%8B%E8%BD%BD%E6%9C%8D%E5%8A%A1%E5%99%A8/</url>
-    <content><![CDATA[<h3 id="Aria2-超快速下载实用程序（简介）"><a href="#Aria2-超快速下载实用程序（简介）" class="headerlink" title="Aria2 - 超快速下载实用程序（简介）"></a>Aria2 - 超快速下载实用程序（简介）</h3><p>aria2是用于下载文件的实用程序。支持的协议是HTTP（S），FTP，SFTP，BitTorrent和Metalink。  aria2可以从多个来源/协议下载文件，并尝试利用最大下载带宽。它支持同时从HTTP（S）/ FTP /  SFTP和BitTorrent下载文件，而从HTTP（S）/ FTP /  SFTP下载的数据上传到BitTorrent群。使用Metalink的块校验和，aria2在下载BitTorrent之类的文件时会自动验证数据块。</p>
+    <content><![CDATA[<html><head></head><body><h3 id="Aria2-超快速下载实用程序（简介）"><a href="#Aria2-超快速下载实用程序（简介）" class="headerlink" title="Aria2 - 超快速下载实用程序（简介）"></a>Aria2 - 超快速下载实用程序（简介）</h3><p>aria2是用于下载文件的实用程序。支持的协议是HTTP（S），FTP，SFTP，BitTorrent和Metalink。  aria2可以从多个来源/协议下载文件，并尝试利用最大下载带宽。它支持同时从HTTP（S）/ FTP /  SFTP和BitTorrent下载文件，而从HTTP（S）/ FTP /  SFTP下载的数据上传到BitTorrent群。使用Metalink的块校验和，aria2在下载BitTorrent之类的文件时会自动验证数据块。</p>
 <p><a href="https://github.com/aria2/aria2">GitHub项目地址</a></p>
 <h3 id="环境简介"><a href="#环境简介" class="headerlink" title="环境简介"></a>环境简介</h3><p>本次使用的树莓派环境是：基于Debian的64位操作系统，详情如下：</p>
 <p><a href="https://img.imgdb.cn/item/603717f75f4313ce2595caec.jpg"><img src="https://img.imgdb.cn/item/603717f75f4313ce2595caec.jpg" alt="环境简介"></a></p>
@@ -199,7 +199,7 @@
 <p><code>mkdir -p ~/.config/aria2/    #创建存放配置的文件夹</code></p>
 <p><code>nano ~/.config/aria2/aria2.config    #添加一个aria2的配置文件（注意不要用sudo）</code></p>
 <p>在这个文件中写入我们自己的配置：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#后台运行</span></span><br><span class="line">daemon=true</span><br><span class="line"><span class="comment">#用户名</span></span><br><span class="line"><span class="comment">#rpc-user=user</span></span><br><span class="line"><span class="comment">#密码</span></span><br><span class="line"><span class="comment">#rpc-passwd=passwd</span></span><br><span class="line"><span class="comment">#设置加密的密钥</span></span><br><span class="line">rpc-secret=secret</span><br><span class="line"><span class="comment">#允许rpc</span></span><br><span class="line">enable-rpc=true</span><br><span class="line"><span class="comment">#允许所有来源, web界面跨域权限需要</span></span><br><span class="line">rpc-allow-origin-<span class="built_in">all</span>=true</span><br><span class="line"><span class="comment">#是否启用https加密，启用之后要设置公钥,私钥的文件路径</span></span><br><span class="line"><span class="comment">#rpc-secure=true</span></span><br><span class="line"><span class="comment">#启用加密设置公钥</span></span><br><span class="line"><span class="comment">#rpc-certificate=/home/pi/.config/aria2/example.crt</span></span><br><span class="line"><span class="comment">#启用加密设置私钥</span></span><br><span class="line"><span class="comment">#rpc-private-key=/home/pi/.config/aria2/example.key</span></span><br><span class="line"><span class="comment">#允许外部访问，false的话只监听本地端口</span></span><br><span class="line">rpc-listen-<span class="built_in">all</span>=true</span><br><span class="line"><span class="comment">#RPC端口, 仅当默认端口被占用时修改</span></span><br><span class="line"><span class="comment">#rpc-listen-port=6800</span></span><br><span class="line"><span class="comment">#最大同时下载数(任务数), 路由建议值: 3</span></span><br><span class="line"><span class="built_in">max</span>-concurrent-downloads=<span class="number">5</span></span><br><span class="line"><span class="comment">#断点续传</span></span><br><span class="line"><span class="keyword">continue</span>=true</span><br><span class="line"><span class="comment">#同服务器连接数</span></span><br><span class="line"><span class="built_in">max</span>-connection-per-server=<span class="number">5</span></span><br><span class="line"><span class="comment">#最小文件分片大小, 下载线程数上限取决于能分出多少片, 对于小文件重要</span></span><br><span class="line"><span class="built_in">min</span>-split-size=10M</span><br><span class="line"><span class="comment">#单文件最大线程数, 路由建议值: 5</span></span><br><span class="line">split=<span class="number">10</span></span><br><span class="line"><span class="comment">#下载速度限制</span></span><br><span class="line"><span class="built_in">max</span>-overall-download-limit=<span class="number">0</span></span><br><span class="line"><span class="comment">#单文件速度限制</span></span><br><span class="line"><span class="built_in">max</span>-download-limit=<span class="number">0</span></span><br><span class="line"><span class="comment">#上传速度限制</span></span><br><span class="line"><span class="built_in">max</span>-overall-upload-limit=<span class="number">0</span></span><br><span class="line"><span class="comment">#单文件速度限制</span></span><br><span class="line"><span class="built_in">max</span>-upload-limit=<span class="number">0</span></span><br><span class="line"><span class="comment">#断开速度过慢的连接</span></span><br><span class="line"><span class="comment">#lowest-speed-limit=0</span></span><br><span class="line"><span class="comment">#验证用，需要1.16.1之后的release版本</span></span><br><span class="line"><span class="comment">#referer=*</span></span><br><span class="line"><span class="comment">#文件保存路径, 默认为当前启动位置(这里我的是下载到用户的Downloads文件夹下，可以根据需要修改)</span></span><br><span class="line"><span class="built_in">dir</span>=/media/pi/Downloads</span><br><span class="line"><span class="comment">#文件缓存, 使用内置的文件缓存, 如果你不相信Linux内核文件缓存和磁盘内置缓存时使用, 需要1.16及以上版本</span></span><br><span class="line"><span class="comment">#disk-cache=0</span></span><br><span class="line"><span class="comment">#另一种Linux文件缓存方式, 使用前确保您使用的内核支持此选项, 需要1.15及以上版本(?)</span></span><br><span class="line"><span class="comment">#enable-mmap=true</span></span><br><span class="line"><span class="comment">#文件预分配, 能有效降低文件碎片, 提高磁盘性能. 缺点是预分配时间较长</span></span><br><span class="line"><span class="comment">#所需时间 none &lt; falloc ? trunc &lt;&lt; prealloc, falloc和trunc需要文件系统和内核支持</span></span><br><span class="line">file-allocation=prealloc</span><br><span class="line"><span class="comment">#不进行证书校验</span></span><br><span class="line">check-certificate=false</span><br><span class="line"><span class="comment">#保存下载会话</span></span><br><span class="line">save-session=/home/pi/.config/aria2/aria2.session</span><br><span class="line"><span class="built_in">input</span>-file=/home/pi/.config/aria2/aria2.session</span><br><span class="line"><span class="comment">#断电续传</span></span><br><span class="line">save-session-interval=<span class="number">60</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line"><span class="comment">#后台运行</span></span><br><span class="line">daemon=true</span><br><span class="line"><span class="comment">#用户名</span></span><br><span class="line"><span class="comment">#rpc-user=user</span></span><br><span class="line"><span class="comment">#密码</span></span><br><span class="line"><span class="comment">#rpc-passwd=passwd</span></span><br><span class="line"><span class="comment">#设置加密的密钥</span></span><br><span class="line">rpc-secret=secret</span><br><span class="line"><span class="comment">#允许rpc</span></span><br><span class="line">enable-rpc=true</span><br><span class="line"><span class="comment">#允许所有来源, web界面跨域权限需要</span></span><br><span class="line">rpc-allow-origin-<span class="built_in">all</span>=true</span><br><span class="line"><span class="comment">#是否启用https加密，启用之后要设置公钥,私钥的文件路径</span></span><br><span class="line"><span class="comment">#rpc-secure=true</span></span><br><span class="line"><span class="comment">#启用加密设置公钥</span></span><br><span class="line"><span class="comment">#rpc-certificate=/home/pi/.config/aria2/example.crt</span></span><br><span class="line"><span class="comment">#启用加密设置私钥</span></span><br><span class="line"><span class="comment">#rpc-private-key=/home/pi/.config/aria2/example.key</span></span><br><span class="line"><span class="comment">#允许外部访问，false的话只监听本地端口</span></span><br><span class="line">rpc-listen-<span class="built_in">all</span>=true</span><br><span class="line"><span class="comment">#RPC端口, 仅当默认端口被占用时修改</span></span><br><span class="line"><span class="comment">#rpc-listen-port=6800</span></span><br><span class="line"><span class="comment">#最大同时下载数(任务数), 路由建议值: 3</span></span><br><span class="line"><span class="built_in">max</span>-concurrent-downloads=<span class="number">5</span></span><br><span class="line"><span class="comment">#断点续传</span></span><br><span class="line"><span class="keyword">continue</span>=true</span><br><span class="line"><span class="comment">#同服务器连接数</span></span><br><span class="line"><span class="built_in">max</span>-connection-per-server=<span class="number">5</span></span><br><span class="line"><span class="comment">#最小文件分片大小, 下载线程数上限取决于能分出多少片, 对于小文件重要</span></span><br><span class="line"><span class="built_in">min</span>-split-size=10M</span><br><span class="line"><span class="comment">#单文件最大线程数, 路由建议值: 5</span></span><br><span class="line">split=<span class="number">10</span></span><br><span class="line"><span class="comment">#下载速度限制</span></span><br><span class="line"><span class="built_in">max</span>-overall-download-limit=<span class="number">0</span></span><br><span class="line"><span class="comment">#单文件速度限制</span></span><br><span class="line"><span class="built_in">max</span>-download-limit=<span class="number">0</span></span><br><span class="line"><span class="comment">#上传速度限制</span></span><br><span class="line"><span class="built_in">max</span>-overall-upload-limit=<span class="number">0</span></span><br><span class="line"><span class="comment">#单文件速度限制</span></span><br><span class="line"><span class="built_in">max</span>-upload-limit=<span class="number">0</span></span><br><span class="line"><span class="comment">#断开速度过慢的连接</span></span><br><span class="line"><span class="comment">#lowest-speed-limit=0</span></span><br><span class="line"><span class="comment">#验证用，需要1.16.1之后的release版本</span></span><br><span class="line"><span class="comment">#referer=*</span></span><br><span class="line"><span class="comment">#文件保存路径, 默认为当前启动位置(这里我的是下载到用户的Downloads文件夹下，可以根据需要修改)</span></span><br><span class="line"><span class="built_in">dir</span>=/media/pi/Downloads</span><br><span class="line"><span class="comment">#文件缓存, 使用内置的文件缓存, 如果你不相信Linux内核文件缓存和磁盘内置缓存时使用, 需要1.16及以上版本</span></span><br><span class="line"><span class="comment">#disk-cache=0</span></span><br><span class="line"><span class="comment">#另一种Linux文件缓存方式, 使用前确保您使用的内核支持此选项, 需要1.15及以上版本(?)</span></span><br><span class="line"><span class="comment">#enable-mmap=true</span></span><br><span class="line"><span class="comment">#文件预分配, 能有效降低文件碎片, 提高磁盘性能. 缺点是预分配时间较长</span></span><br><span class="line"><span class="comment">#所需时间 none &lt; falloc ? trunc &lt;&lt; prealloc, falloc和trunc需要文件系统和内核支持</span></span><br><span class="line">file-allocation=prealloc</span><br><span class="line"><span class="comment">#不进行证书校验</span></span><br><span class="line">check-certificate=false</span><br><span class="line"><span class="comment">#保存下载会话</span></span><br><span class="line">save-session=/home/pi/.config/aria2/aria2.session</span><br><span class="line"><span class="built_in">input</span>-file=/home/pi/.config/aria2/aria2.session</span><br><span class="line"><span class="comment">#断电续传</span></span><br><span class="line">save-session-interval=<span class="number">60</span></span><br></pre></td></tr></tbody></table></figure>
 <p>注意我这里的下载路径是<code>/media/pi/Downloads</code>，可以根据自己的情况修改;并且我这里设置的rpc密钥是<code>secret</code>。这些设置可以在后面以图形化的方式修改。</p>
 <p>​      </p>
 <p>配置完成后，还要创建该会话空白文件：</p>
@@ -211,7 +211,7 @@
 <h3 id="设置Aria服务和开机启动"><a href="#设置Aria服务和开机启动" class="headerlink" title="设置Aria服务和开机启动"></a>设置Aria服务和开机启动</h3><p>创建并编辑aria.service文件 ：</p>
 <p><code>sudo nano /lib/systemd/system/aria.service</code></p>
 <p>在该文件写入以下内容：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=Aria2 Service</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">User=pi</span><br><span class="line">Type=forking</span><br><span class="line">ExecStart=/usr/bin/aria2c --conf-path=/home/pi/.config/aria2/aria2.config</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=Aria2 Service</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">User=pi</span><br><span class="line">Type=forking</span><br><span class="line">ExecStart=/usr/bin/aria2c --conf-path=/home/pi/.config/aria2/aria2.config</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></tbody></table></figure>
 <p>重新载入服务，并设置开机启动：</p>
 <p><code>sudo systemctl daemon-reload sudo systemctl enable aria</code></p>
 <p><em>重启</em> 之后我们检查下aria服务的状态：<code>systemctl status aria</code></p>
@@ -250,10 +250,10 @@
 <h3 id="BT下载速度慢问题"><a href="#BT下载速度慢问题" class="headerlink" title="BT下载速度慢问题"></a>BT下载速度慢问题</h3><p>有时候我们会发现，使用aria2没有迅雷下载快，甚至下不动，原因是迅雷有自己的服务器，而Aria2没有加速服务器，有些种子一直没几个人上传导致只有几KB的速度甚至完全没速度，这种情况下该怎么办呢？<br> 给Aria2添加Tracker，让Aria2不只是从DHT网络或者种子文件中存储的Tracker信息，从而找到更多的下载源。 </p>
 <p><a href="https://www.yaozuopan.top/index.php/archives/1014/">Tracker服务器</a></p>
 <p>比如这里汇总了20个常用的最优Tracker：（已经用逗号分割）</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">bt-tracker=udp://tracker.coppersurfer.tk:<span class="number">6969</span>/announce,udp://tracker.<span class="built_in">open</span>-internet.nl:<span class="number">6969</span>/announce,udp://tracker.skyts.net:<span class="number">6969</span>/announce,udp://tracker.piratepublic.com:<span class="number">1337</span>/announce,udp://tracker.opentrackr.org:<span class="number">1337</span>/announce,udp://<span class="number">9.</span>rarbg.to:<span class="number">2710</span>/announce,udp://retracker.coltel.ru:<span class="number">2710</span>/announce,udp://pubt.<span class="keyword">in</span>:<span class="number">2710</span>/announce,udp://public.popcorn-tracker.org:<span class="number">6969</span>/announce,udp://z.crazyhd.com:<span class="number">2710</span>/announce,udp://wambo.club:<span class="number">1337</span>/announce,udp://tracker4.itzmx.com:<span class="number">2710</span>/announce,udp://tracker1.wasabii.com.tw:<span class="number">6969</span>/announce,udp://tracker.zer0day.to:<span class="number">1337</span>/announce,udp://tracker.xku.tv:<span class="number">6969</span>/announce,udp://tracker.vanitycore.co:<span class="number">6969</span>/announce,udp://ipv4.tracker.harry.lu:<span class="number">80</span>/announce,udp://inferno.demonoid.pw:<span class="number">3418</span>/announce,udp://<span class="built_in">open</span>.facedatabg.net:<span class="number">6969</span>/announce,udp://mgtracker.org:<span class="number">6969</span>/announce</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tbody><tr><td class="code"><pre><span class="line">bt-tracker=udp://tracker.coppersurfer.tk:<span class="number">6969</span>/announce,udp://tracker.<span class="built_in">open</span>-internet.nl:<span class="number">6969</span>/announce,udp://tracker.skyts.net:<span class="number">6969</span>/announce,udp://tracker.piratepublic.com:<span class="number">1337</span>/announce,udp://tracker.opentrackr.org:<span class="number">1337</span>/announce,udp://<span class="number">9.</span>rarbg.to:<span class="number">2710</span>/announce,udp://retracker.coltel.ru:<span class="number">2710</span>/announce,udp://pubt.<span class="keyword">in</span>:<span class="number">2710</span>/announce,udp://public.popcorn-tracker.org:<span class="number">6969</span>/announce,udp://z.crazyhd.com:<span class="number">2710</span>/announce,udp://wambo.club:<span class="number">1337</span>/announce,udp://tracker4.itzmx.com:<span class="number">2710</span>/announce,udp://tracker1.wasabii.com.tw:<span class="number">6969</span>/announce,udp://tracker.zer0day.to:<span class="number">1337</span>/announce,udp://tracker.xku.tv:<span class="number">6969</span>/announce,udp://tracker.vanitycore.co:<span class="number">6969</span>/announce,udp://ipv4.tracker.harry.lu:<span class="number">80</span>/announce,udp://inferno.demonoid.pw:<span class="number">3418</span>/announce,udp://<span class="built_in">open</span>.facedatabg.net:<span class="number">6969</span>/announce,udp://mgtracker.org:<span class="number">6969</span>/announce</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
 <p><a href="https://img.imgdb.cn/item/60375ed35f4313ce250c5b74.png"><img src="https://img.imgdb.cn/item/60375ed35f4313ce250c5b74.png"></a></p>
 <p>原创文章，转载请注明出处。</p>
-]]></content>
+</body></html>]]></content>
       <categories>
         <category>教程</category>
       </categories>
@@ -264,7 +264,7 @@
   <entry>
     <title>「git-1」关于Git你应该知道的东西</title>
     <url>/2021/04/13/%E5%85%B3%E4%BA%8Egit-%E4%BD%A0%E5%BA%94%E8%AF%A5%E7%9F%A5%E9%81%93%E7%9A%84%E4%B8%9C%E8%A5%BF/</url>
-    <content><![CDATA[<h2 id="Git的前世今生"><a href="#Git的前世今生" class="headerlink" title="Git的前世今生"></a>Git的前世今生</h2><p>Git 是 Linus Torvalds 2005年为了帮助管理 Linux 内核开发而开发的一个开放源码的版本控制软件。版本控制系统记录着我们随时间推移而对代码的更改，存储在一个特殊的数据库中，我们叫它Repository（仓库）。我们可以查看我们项目的历史，看看是谁在什么时间做了哪些更改，如果有错误的话，我们也可以很轻易地将项目还原到以前的状态。    </p>
+    <content><![CDATA[<html><head></head><body><h2 id="Git的前世今生"><a href="#Git的前世今生" class="headerlink" title="Git的前世今生"></a>Git的前世今生</h2><p>Git 是 Linus Torvalds 2005年为了帮助管理 Linux 内核开发而开发的一个开放源码的版本控制软件。版本控制系统记录着我们随时间推移而对代码的更改，存储在一个特殊的数据库中，我们叫它Repository（仓库）。我们可以查看我们项目的历史，看看是谁在什么时间做了哪些更改，如果有错误的话，我们也可以很轻易地将项目还原到以前的状态。    </p>
 <p>Git和Mercurial都是分布式版本控制系统，其中Git最受欢迎的版本控制系统，因为它免费、开源、而且超级快和可扩展的操作；例如分支和合并在其他的版本控制系统中非常缓慢且及其痛苦。</p>
 <p>据统计，全球90%的开发人员使用git，这也就是为什么几乎所有的开发人员述职的时候都提到git的原因。所以git是履历表中必备的技能，应该由内到外的了解。了解它如何跟踪项目的历史和如何有效地与他人合作。</p>
 <h2 id="如何开始"><a href="#如何开始" class="headerlink" title="如何开始"></a>如何开始</h2><p><a href="https://git-scm.com/">下载Git</a></p>
@@ -274,7 +274,7 @@
 <p><img src="https://img.imgdb.cn/item/60759c958322e6675c7d9d76.jpg" alt="初始化级别"></p>
 <p>我们可以使用<code>git config</code> 接要配置的级别，再接上相应的项目，比如这里： </p>
 <blockquote>
-<p><code>git config --global user.name &quot;Your Name&quot;</code><br> #用户名<br><code>git config --global user.email &quot;email@example.com&quot;</code><br> #邮箱</p>
+<p><code>git config --global user.name "Your Name"</code><br> #用户名<br><code>git config --global user.email "email@example.com"</code><br> #邮箱</p>
 <p>查看信息：</p>
 <p><code>git config -l</code></p>
 </blockquote>
@@ -293,19 +293,19 @@
 <h3 id="git隐藏文件夹"><a href="#git隐藏文件夹" class="headerlink" title=".git隐藏文件夹"></a>.git隐藏文件夹</h3><p>初始化完成以后，我们会发现，在工程文件夹下会出现一个<code>.git</code>的文件夹。这个文件夹通常是隐藏的，这也是git存储有关我们的项目历史信息和相关分支的地方。当然，你不需要了解太多，只是记住，不要删除这个文件夹。</p>
 <h3 id="Git工作流"><a href="#Git工作流" class="headerlink" title="Git工作流"></a>Git工作流</h3><p>假设我们的工作文件夹已经初始化了一个git仓库，每当我们的项目达到我们所期望的状态时，我们可以记录我们的更改到存储库中，创建提交就像照快照一样。在git中，我们有一个特殊的区域或者叫做特殊的中间步骤，在其他的控制系统中不存在，它叫做暂存区，我们将修改后的文件添加到暂存区，如果一切正常，我们的快照将被永久地存储在存储库中。</p>
 <p>我们可以使用：</p>
-<p><code>git add &quot;你的文件&quot;</code>进行文件的添加（到工作区）。</p>
-<p><code>git commit -m &quot;提交的注释&quot;</code>进行文件的提交（到存储库）</p>
+<p><code>git add "你的文件"</code>进行文件的添加（到工作区）。</p>
+<p><code>git commit -m "提交的注释"</code>进行文件的提交（到存储库）</p>
 <p><img src="https://img.imgdb.cn/item/6076e3eb8322e6675ce33b5f.jpg" alt="工作流"></p>
 <p>值得注意的是，如果我们对file1和file2做了修改 ，我们还要使用<code>git add file1</code>来保存我们刚刚的修改（到暂存区），再提交到存储库中。当然，如果途中你删除了file1，同样也要使用add命令来更新暂存区（是的你没看错，即使是删除了文件，也是add命令）。</p>
 <p>需要注意的是，git不会自动的追踪文件，我们需要手动的使用add指示git跟踪他们。我们可以使用：<code>git status</code>查看工作状态。如果你使用的是zsh终端，你也可以看出我们的提示标志变成了黄色，也就是“我们的工作区是脏的”，即可以进行下一次提交了。</p>
 <p><img src="https://img.imgdb.cn/item/6076e4c58322e6675ce5582f.jpg" alt="提交"></p>
 <h3 id="Git的提交？（commit）"><a href="#Git的提交？（commit）" class="headerlink" title="Git的提交？（commit）"></a>Git的提交？（commit）</h3><p>我们每次使用commit提交命令，git会生成唯一的标识符，当然它还包括提交的注释和相关内容的修改信息、通过谁可以获得我们项目完整的快照等等信息。</p>
 <p>不同于其他许多版本控制系统，git不存储已经更改的部分，它存储完整的增量信息，这样可以让我们更快地进行恢复。</p>
-<p>前面提到过使用<code>git commit -m &quot;注释&quot;</code>可以进行带注释的提交，那如果去掉<code>-m</code>的注释呢？是的。不加m选项可以直接打开默认的编辑器进行长注释的添加。值得注意的是，在这个文件中我们尽量使用标准的格式，也就是开始一段写较短的总结性的注释，接下来一段再写较长的注释。</p>
+<p>前面提到过使用<code>git commit -m "注释"</code>可以进行带注释的提交，那如果去掉<code>-m</code>的注释呢？是的。不加m选项可以直接打开默认的编辑器进行长注释的添加。值得注意的是，在这个文件中我们尽量使用标准的格式，也就是开始一段写较短的总结性的注释，接下来一段再写较长的注释。</p>
 <p><img src="https://img.imgdb.cn/item/6076e6528322e6675ce8a68b.jpg" alt="长注释"></p>
 <h4 id="什么时候该进行提交？"><a href="#什么时候该进行提交？" class="headerlink" title="什么时候该进行提交？"></a>什么时候该进行提交？</h4><p>不建议将提交的粒度分的太细，也不要过于大，这样会很难进行我们日后的修改，同样，不要尝试每天一定要提交多少次，也不要一次提交包含多个错误修复或更新。最佳的做法是当你的工作达到了你想到达的状态时，进行一次提交。</p>
 <p><img src="https://img.imgdb.cn/item/6076e7ee8322e6675cec09a1.jpg" alt="什么时候该提交"></p>
-]]></content>
+</body></html>]]></content>
       <categories>
         <category>知识分享</category>
       </categories>
@@ -316,12 +316,12 @@
   <entry>
     <title>建站纪念</title>
     <url>/2021/01/31/%E5%BB%BA%E7%AB%99%E7%BA%AA%E5%BF%B5/</url>
-    <content><![CDATA[<p>事情的起源可能还要从那次计网课开始说起。</p>
+    <content><![CDATA[<html><head></head><body><p>事情的起源可能还要从那次计网课开始说起。</p>
 <p>我们的计网老师是个不折不扣的“社会人”，雷厉风行、卓尔不群。每次上课的时候他都会随口布置一些他认为很简单的任务。但实际上，那时的我们从来没有听过他布置的任务，因为他从来不检查。可能是由于那时我们根本不懂得怎么搞计网，最多也就是买一个域名和一个免费的服务器，简单地在上面写写画画，等到服务器过期后就再也没有管过。</p>
 <p>不过，这波啊。直到已经结课后的这个寒假，就想着做点什么吧。其实我也是早就有搭建一个小博客的想法，但是一直没有付诸于实践，这次趁着寒假终于有机会去实践它。</p>
 <p>我以前没怎么接触过前端这一部分，很多东西其实还是要参考其他有经验的人。在此我非常感谢<a href="https://www.cnblogs.com/huanhao/p/hexobase.html#%E5%AE%89%E8%A3%85hexo%E5%92%8C%E5%88%9D%E5%A7%8B%E5%8C%96%E5%8D%9A%E5%AE%A2">huanhao</a>，是他分享了博客的搭建教程，写的非常详细。我也是主要参考了这篇博客，没有他的话我可能还要走不少弯路。</p>
 <p>有时候看着别人的小站，自己也不禁在想，什么时候才能写出这么好的博客呢？我希望在这里分享我的感想、教程和自己各种项目上踩过的坑，将他记录下来，不仅可以方便自己日后查阅，同时也可能帮助到需要的人。</p>
-]]></content>
+</body></html>]]></content>
       <categories>
         <category>杂谈</category>
       </categories>
@@ -332,7 +332,7 @@
   <entry>
     <title>怎么ping命令还需要root权限？</title>
     <url>/2021/08/06/%E6%80%8E%E4%B9%88ping%E5%91%BD%E4%BB%A4%E8%BF%98%E9%9C%80%E8%A6%81root%E6%9D%83%E9%99%90%EF%BC%9F/</url>
-    <content><![CDATA[<h2 id="事情起因"><a href="#事情起因" class="headerlink" title="事情起因"></a>事情起因</h2><p>事情的起因是这样的，由于原本的WSL Ubuntu被我给玩坏了，所以打算准备卸载了从新安装一下，正好也想尝试尝试Debian这个上游的发行版。不过在我装好之后心血来潮执行了一次ping命令之后：</p>
+    <content><![CDATA[<html><head></head><body><h2 id="事情起因"><a href="#事情起因" class="headerlink" title="事情起因"></a>事情起因</h2><p>事情的起因是这样的，由于原本的WSL Ubuntu被我给玩坏了，所以打算准备卸载了从新安装一下，正好也想尝试尝试Debian这个上游的发行版。不过在我装好之后心血来潮执行了一次ping命令之后：</p>
 <p><a href="https://pic.imgdb.cn/item/610c8f1b5132923bf840d72e.png"><img src="https://pic.imgdb.cn/item/610c8f1b5132923bf840d72e.png" alt="必须要加sudo的ping"></a></p>
 <p>奇怪了，这个命令应该是不需要提升权限的呀，为什么这次必须要加上sudo才可以执行呢？话不多说，我们先来检查一下这个命令的权限配置情况：</p>
 <p><a href="https://pic.imgdb.cn/item/610c8fb85132923bf8418f0b.png"><img src="https://pic.imgdb.cn/item/610c8fb85132923bf8418f0b.png" alt="ping的权限情况"></a></p>
@@ -362,7 +362,7 @@
 <h3 id="所以说ip-forward又是什么？"><a href="#所以说ip-forward又是什么？" class="headerlink" title="所以说ip_forward又是什么？"></a>所以说ip_forward又是什么？</h3><p>如同<code>ping_group_range</code>是Linux内核提供的，这个转发数据包的能力也是Linux内核所提供的。我们知道在局域网络里面的主机可以透过广播的方式来进行网络封包的传送，但在不同网段内的主机想要互相联机时，就得要透过路由器了。既然主机想要将数据传送到不同的网域时得透过路由器的帮忙，所以，路由器的主要功能就是：“转递网络封包“嘛！也就是说，路由器会分析来源端封包的  IP 表头，在表头内找出要送达的目标 IP 后，透过路由器本身的路由表 (routing table) 来将这个封包向下一个目标 (next  hop) 传送。这也就是路由器的功能。</p>
 <p>而为什么WSL  Debian只有这一个配置文件我觉的这可能与WSL1有关吧。可能这些命令并没有直接调用Linux的底层而是直接走的Windows的底层，毕竟WSL Debian的这个文件夹只有这一个文件，而虚拟机中的这个文件夹可是有一堆文件的哦。当然这都是我的个人猜测。</p>
 <h2 id="我们学到了什么？"><a href="#我们学到了什么？" class="headerlink" title="我们学到了什么？"></a>我们学到了什么？</h2><p>我们来理一理我们的思路，我们一路从一个普通用户无法执行ping命令而已，一路追查到这里。我记得当初看鸟哥的书的时候，他说过一句话：学习Linux更多的时候培养的是解决问题的能力，每一个东西都是新的，同样经过这次摸索是不是觉得原来底层原来这么庞大，我们看到的只不过是冰山一隅罢了。</p>
-]]></content>
+</body></html>]]></content>
       <categories>
         <category>教程</category>
       </categories>
@@ -373,39 +373,39 @@
   <entry>
     <title>树莓派安装MySQL并且开启远程访问</title>
     <url>/2021/03/10/%E6%A0%91%E8%8E%93%E6%B4%BE%E5%AE%89%E8%A3%85MySQL%E5%B9%B6%E4%B8%94%E5%BC%80%E5%90%AF%E8%BF%9C%E7%A8%8B%E8%AE%BF%E9%97%AE/</url>
-    <content><![CDATA[<h3 id="环境简介"><a href="#环境简介" class="headerlink" title="环境简介"></a>环境简介</h3><p>本次采用的环境仍就是刷入了基于Debian buster的树莓派操作系统。</p>
+    <content><![CDATA[<html><head></head><body><h3 id="环境简介"><a href="#环境简介" class="headerlink" title="环境简介"></a>环境简介</h3><p>本次采用的环境仍就是刷入了基于Debian buster的树莓派操作系统。</p>
 <p><a href="https://img.imgdb.cn/item/6048b7cc5aedab222c746549.jpg"><img src="https://img.imgdb.cn/item/6048b7cc5aedab222c746549.jpg" alt="环境简介"></a></p>
 <p>本来想安装MySQL数据库的， <em>但是查找了一圈发现镜像里木有MySQL数据库，于是便转向了MarinaDB.</em> 这俩数据库，虽说差不多，而且是由同一个团队开发，但是部分的配置文件的地点还是有些不同，经过查找资料，决定将此次过程记录下来，方便日后与大家。</p>
 <p>本次使用ssh连接到树莓派进行操作。</p>
 <p>树莓派采用的是中科大的镜像源。<a href="http://mirrors.ustc.edu.cn/help/debian.html">中科大源链接</a></p>
-<h3 id="安装MariaDB"><a href="#安装MariaDB" class="headerlink" title="安装MariaDB"></a>安装MariaDB</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt-get install mariadb-server</span><br></pre></td></tr></table></figure>
+<h3 id="安装MariaDB"><a href="#安装MariaDB" class="headerlink" title="安装MariaDB"></a>安装MariaDB</h3><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">sudo apt-get install mariadb-server</span><br></pre></td></tr></tbody></table></figure>
 <p><a href="https://img.imgdb.cn/item/6048ba7c5aedab222c7626af.jpg"><img src="https://img.imgdb.cn/item/6048ba7c5aedab222c7626af.jpg" alt="安装"></a></p>
 <p>安装成功后启动数据库并且配置开机自动启动（可选）</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo systemctl start mariadb</span><br><span class="line">sudo systemctl enable mariadb</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">sudo systemctl start mariadb</span><br><span class="line">sudo systemctl enable mariadb</span><br></pre></td></tr></tbody></table></figure>
 <p>可以使用<code>systemctl status mariadb</code>查看是否启动。</p>
 <h3 id="配置MariaDB的root密码"><a href="#配置MariaDB的root密码" class="headerlink" title="配置MariaDB的root密码"></a>配置MariaDB的root密码</h3><p>首先让我们登陆数据库：<code>sudo mysql -u root -p</code> 首次登陆不需要密码，弹出输入密码的提示直接回车即可。</p>
 <p>接下来我们配置一下root用户的密码，依次执行下列三句话：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">update mysql.user set plugin&#x3D;&#39;mysql_native_password&#39; where user&#x3D;&#39;root&#39;;</span><br><span class="line">update mysql.user set password&#x3D;password(&quot;你的root密码&quot;) where user&#x3D;&#39;root&#39;; </span><br><span class="line">FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">update mysql.user set plugin='mysql_native_password' where user='root';</span><br><span class="line">update mysql.user set password=password("你的root密码") where user='root'; </span><br><span class="line">FLUSH PRIVILEGES;</span><br></pre></td></tr></tbody></table></figure>
 <p><a href="https://img.imgdb.cn/item/6048bd2d5aedab222c77cc9d.jpg"><img src="https://img.imgdb.cn/item/6048bd2d5aedab222c77cc9d.jpg" alt="更改root密码"></a></p>
 <p>这样root的密码就配置好了。</p>
 <h3 id="设置打开MariaDB的远程连接许可"><a href="#设置打开MariaDB的远程连接许可" class="headerlink" title="设置打开MariaDB的远程连接许可"></a>设置打开MariaDB的远程连接许可</h3><p>回到终端环境。首先编辑配置文件：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo nano &#x2F;etc&#x2F;mysql&#x2F;mariadb.conf.d&#x2F;50-server.cnf</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">sudo nano /etc/mysql/mariadb.conf.d/50-server.cnf</span><br></pre></td></tr></tbody></table></figure>
 <p>注释掉<code>bind-address = 127.0.0.1</code>这一行：</p>
 <h3 id="设置用户的远程登录权限"><a href="#设置用户的远程登录权限" class="headerlink" title="设置用户的远程登录权限"></a><strong>设置用户的远程登录权限</strong></h3><p>在数据库中：</p>
 <blockquote>
 <p>方法一： 设置新远程用户（推荐）</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">CREATE USER &#39;你的用户名&#39;@&#39;%&#39; IDENTIFIED BY &#39;你的密码&#39;; </span><br><span class="line">GRANT ALL PRIVILEGES ON *.* TO &#39;你的用户名&#39;@&#39;%&#39; IDENTIFIED BY &#39;你的密码&#39; WITH GRANT OPTION; </span><br><span class="line">FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">CREATE USER '你的用户名'@'%' IDENTIFIED BY '你的密码'; </span><br><span class="line">GRANT ALL PRIVILEGES ON *.* TO '你的用户名'@'%' IDENTIFIED BY '你的密码' WITH GRANT OPTION; </span><br><span class="line">FLUSH PRIVILEGES;</span><br></pre></td></tr></tbody></table></figure>
 
 <p><a href="https://img.imgdb.cn/item/6048c09e5aedab222c7a3556.jpg"><img src="https://img.imgdb.cn/item/6048c09e5aedab222c7a3556.jpg" alt="创建新用户"></a></p>
 <p>例如这里创建了一个名为<code>raspisql</code>的用户。</p>
 </blockquote>
 <blockquote>
 <p>方法二： 直接修改root用户的远程权限</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">USE mysql;</span><br><span class="line">UPDATE user SET host &#x3D; &#39;%&#39; WHERE user &#x3D; &#39;root&#39;;</span><br><span class="line">GRANT ALL PRIVILEGES ON *.* TO &#39;root&#39;@&#39;%&#39; IDENTIFIED BY &#39;&#39; WITH GRANT OPTION; </span><br><span class="line">FLUSH PRIVILEGES;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">USE mysql;</span><br><span class="line">UPDATE user SET host = '%' WHERE user = 'root';</span><br><span class="line">GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '' WITH GRANT OPTION; </span><br><span class="line">FLUSH PRIVILEGES;</span><br></pre></td></tr></tbody></table></figure>
 
 <p>完成之后退出数据库。</p>
 </blockquote>
-<h3 id="重启MariaDB"><a href="#重启MariaDB" class="headerlink" title="重启MariaDB"></a>重启MariaDB</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo systemctl restart mariadb</span><br></pre></td></tr></table></figure>
+<h3 id="重启MariaDB"><a href="#重启MariaDB" class="headerlink" title="重启MariaDB"></a>重启MariaDB</h3><figure class="highlight plain"><table><tbody><tr><td class="code"><pre><span class="line">sudo systemctl restart mariadb</span><br></pre></td></tr></tbody></table></figure>
 <h3 id="本地远程测试"><a href="#本地远程测试" class="headerlink" title="本地远程测试"></a>本地远程测试</h3><p>本地使用DataGrip数据库管理软件进行连接测试：</p>
 <p>在DataGrip中依次点击File-&gt; New-&gt;Data Source-&gt; MariaDB：</p>
 <p><a href="https://img.imgdb.cn/item/6048c1e65aedab222c7b43a3.png"><img src="https://img.imgdb.cn/item/6048c1e65aedab222c7b43a3.png" alt="本地连接"></a></p>
@@ -414,12 +414,23 @@
 <p>配置完成后就出现在了我们的侧边栏中，此时与你在本地的数据库是一样的。比如我这里将普通用户和root用户都进行了链接：</p>
 <p><a href="https://img.imgdb.cn/item/6048c4645aedab222c7d77ce.jpg"><img src="https://img.imgdb.cn/item/6048c4645aedab222c7d77ce.jpg" alt="2"></a></p>
 <p>这下操作就和本地的一模一样。</p>
-]]></content>
+</body></html>]]></content>
       <categories>
         <category>教程</category>
       </categories>
       <tags>
         <tag>树莓派</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>给你的pacman加上Pac-Man吧</title>
+    <url>/2021/08/24/%E7%BB%99%E4%BD%A0%E7%9A%84pacman%E5%8A%A0%E4%B8%8APac-Man%E5%90%A7/</url>
+    <content><![CDATA[<html><head></head><body></body></html>]]></content>
+      <categories>
+        <category>杂谈</category>
+      </categories>
+      <tags>
+        <tag>杂谈</tag>
       </tags>
   </entry>
 </search>

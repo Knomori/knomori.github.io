@@ -1,14 +1,11 @@
-
-<!DOCTYPE html>
-<html lang="zh-CN" class="loading">
-<head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<!DOCTYPE html><html lang="zh-CN" class="loading"><head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ArchLinux下搭建Arm交叉编译环境 - 邓邓的部落格</title>
-    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="google" content="notranslate" />
+    <meta name="google" content="notranslate">
     <meta name="keywords" content="部落格,"> 
     <meta name="description" content="这学期新开了一门Arm嵌入式，由于开发板不具备资自主编译的能力，所以必须搭建交叉编译环境。当然，交叉编译环境的主编译机器以Linux为佳，而我的主机恰好是Arch，原本以为在Arch上的交叉编译环境,"> 
     <meta name="author" content="Deng Xinhang"> 
@@ -18,15 +15,14 @@
     
 <link rel="stylesheet" href="/css/diaspora.css">
 
-	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+	<script async="" src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script>
          (adsbygoogle = window.adsbygoogle || []).push({
               google_ad_client: "ca-pub-8691406134231910",
               enable_page_level_ads: true
          });
     </script>
-    <script async custom-element="amp-auto-ads"
-        src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    <script async="" custom-element="amp-auto-ads" src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
     </script>
 <meta name="generator" content="Hexo 5.3.0"></head>
 
@@ -52,7 +48,7 @@
 
     <div class="section">
         <div class="article">
-    <div class='main'>
+    <div class="main">
         <h1 class="title">ArchLinux下搭建Arm交叉编译环境</h1>
         <div class="stuff">
             <span>四月 27, 2021</span>
@@ -69,19 +65,19 @@
 <p><img src="https://img.imgdb.cn/item/60875eb0d1a9ae528ffd083c.jpg" alt="运行环境"></p>
 <p>很显然，我们的编译环境是64位的操作系统，运行时环境是32位的arm架构的机器。我们的思路也很简单，就是如果你想在开发板上运行程序，先在自己的主机上用arm-linux-gcc进行编译，再拿到开发板上去运行。</p>
 <h2 id="准备工作1——启用-multilib-和Octopi"><a href="#准备工作1——启用-multilib-和Octopi" class="headerlink" title="准备工作1——启用 [multilib] 和Octopi"></a>准备工作1——启用 [multilib] 和Octopi</h2><h3 id="启用multilib"><a href="#启用multilib" class="headerlink" title="启用multilib"></a>启用multilib</h3><p>首先我们编辑我们的ArchLinux镜像文件，启用被注释的<code>[multilib]</code>镜像源，并且更新系统。这一步的目的是由于在64位的机器上编译32位的应用程序，可能会出现找不到32位的库的情况，这个库包含了大量的32位的库文件。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim &#x2F;etc&#x2F;pacman.conf	#编辑镜像文件</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/pacman.conf	#编辑镜像文件</span><br></pre></td></tr></tbody></table></figure>
 <p><img src="https://img.imgdb.cn/item/60876289d1a9ae528f19720b.jpg" alt="启用multilib库"></p>
 <p>接着更新我们的系统：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo pacman -Syu	#更新系统</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo pacman -Syu	#更新系统</span><br></pre></td></tr></tbody></table></figure>
 <h3 id="使用Octopi（可选）"><a href="#使用Octopi（可选）" class="headerlink" title="使用Octopi（可选）"></a>使用Octopi（可选）</h3><p>我们知道，Arch Linux下默认是没有包管理器的，操作基本上是由<code>pacman</code>这个十分强大的包管理器完成。而<code>Octopi</code>这个包管理器可以很方便的，以图形话的方式查找到我们想要的软件包。你可以使用AUR去安装它：(如果没有<code>yay</code>的话请先安装这个AUR的管理器)</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yay -S octopi	#通过AUR安装octopi</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yay -S octopi	#通过AUR安装octopi</span><br></pre></td></tr></tbody></table></figure>
 <h2 id="准备工作2——下载arm-linux-gcc"><a href="#准备工作2——下载arm-linux-gcc" class="headerlink" title="准备工作2——下载arm-linux-gcc"></a>准备工作2——下载<code>arm-linux-gcc</code></h2><p>搜索后发现，网上最多人安装的还是<code>arm-linux-gcc</code>交叉编译器。适合小型的、环境不是特别新的嵌入式环境。这里我已经下载好了，可以直接提取：</p>
 <p><a target="_blank" rel="noopener" href="https://pan.baidu.com/s/14wvacgfr4rAIGxTK2QYM6w">下载arm-linux-gcc</a> 密码：gieq</p>
 <p>下载完成后解压到<code>/opt</code>目录下：（以图形的文件浏览器看就是多了一个FriendlyARM的文件夹）</p>
 <p>接下来将<code>arm-linux-gcc</code>添加到环境变量，首先我们编辑<code>～/.zshrc文件</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim ~&#x2F;.zshrc</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim ~/.zshrc</span><br></pre></td></tr></tbody></table></figure>
 <p>在最下方添加如下字段，即就是将<code>/opt/FriendlyARM</code>下的bin目录到环境变量。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export PATH&#x3D;&#x2F;opt&#x2F;FriendlyARM&#x2F;toolschain&#x2F;4.4.3&#x2F;bin&#x2F;:$PATH</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export PATH=/opt/FriendlyARM/toolschain/4.4.3/bin/:$PATH</span><br></pre></td></tr></tbody></table></figure>
 <p>保存退出后执行<code> source ~/.zshrc</code>以立即生效环境变量。这样使用<code>arm-linux-gcc -v</code>查看安装的编译器版本。</p>
 <p><img src="https://img.imgdb.cn/item/60876aced1a9ae528f6778aa.jpg" alt="插看其版本"></p>
 <h2 id="准备工作3——安装缺少的包文件"><a href="#准备工作3——安装缺少的包文件" class="headerlink" title="准备工作3——安装缺少的包文件"></a>准备工作3——安装缺少的包文件</h2><p>当我们使用<code>arm-linux-gcc</code>去编译我们的c++或c程序时会提示缺少某一个库文件，好的，那么这个库文件在哪里？首先我们可以直接去<code>Octopi</code>包管理器去找有没有这个库，比如我要找<code>libstdc++5</code>这个库，或者<code>lib32-glibc</code>这个库，都可以直接去octopi上查找。它很方便的一个功能就是模糊查找，而且速度较快。</p>
@@ -95,7 +91,7 @@
 <p><img src="https://img.imgdb.cn/item/60876fe8d1a9ae528f8efed8.jpg" alt="编译"></p>
 <p><img src="https://img.imgdb.cn/item/60877073d1a9ae528f929ced.png" alt="运行测试"></p>
 
-            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
                 <source type="audio/mpeg" src="">
             </audio>
@@ -106,21 +102,12 @@
             
         </div>
         
-    <div id='gitalk-container' class="comment link"
-		data-enable='false'
-        data-ae='false'
-        data-ci=''
-        data-cs=''
-        data-r=''
-        data-o=''
-        data-a=''
-        data-d='false'
-    >查看评论</div>
+    <div id="gitalk-container" class="comment link" data-enable="false" data-ae="false" data-ci="" data-cs="" data-r="" data-o="" data-a="" data-d="false">查看评论</div>
 
 
     </div>
     
-        <div class='side'>
+        <div class="side">
 			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E8%AF%B4%E6%98%8E%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">环境说明：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83%EF%BC%9A"><span class="toc-number">1.1.</span> <span class="toc-text">编译环境：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83%EF%BC%9A"><span class="toc-number">1.2.</span> <span class="toc-text">运行环境：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C1%E2%80%94%E2%80%94%E5%90%AF%E7%94%A8-multilib-%E5%92%8COctopi"><span class="toc-number">2.</span> <span class="toc-text">准备工作1——启用 [multilib] 和Octopi</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E7%94%A8multilib"><span class="toc-number">2.1.</span> <span class="toc-text">启用multilib</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8Octopi%EF%BC%88%E5%8F%AF%E9%80%89%EF%BC%89"><span class="toc-number">2.2.</span> <span class="toc-text">使用Octopi（可选）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C2%E2%80%94%E2%80%94%E4%B8%8B%E8%BD%BDarm-linux-gcc"><span class="toc-number">3.</span> <span class="toc-text">准备工作2——下载arm-linux-gcc</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C3%E2%80%94%E2%80%94%E5%AE%89%E8%A3%85%E7%BC%BA%E5%B0%91%E7%9A%84%E5%8C%85%E6%96%87%E4%BB%B6"><span class="toc-number">4.</span> <span class="toc-text">准备工作3——安装缺少的包文件</span></a></li></ol>	
         </div>
     
@@ -129,7 +116,7 @@
 
     </div>
 </div>
-</body>
+
 
 
 <script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
@@ -199,4 +186,5 @@
 
 
 
-</html>
+
+<script type="text/javascript" charset="utf-8" src="/js/lazyload-plugin/lazyload.intersectionObserver.min.js"></script></body></html><!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->

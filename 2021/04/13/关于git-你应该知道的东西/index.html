@@ -1,14 +1,11 @@
-
-<!DOCTYPE html>
-<html lang="zh-CN" class="loading">
-<head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<!DOCTYPE html><html lang="zh-CN" class="loading"><head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>「git-1」关于Git你应该知道的东西 - 邓邓的部落格</title>
-    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="google" content="notranslate" />
+    <meta name="google" content="notranslate">
     <meta name="keywords" content="部落格,"> 
     <meta name="description" content="Git的前世今生Git 是 Linus Torvalds 2005年为了帮助管理 Linux 内核开发而开发的一个开放源码的版本控制软件。版本控制系统记录着我们随时间推移而对代码的更改，存储在一个特,"> 
     <meta name="author" content="Deng Xinhang"> 
@@ -18,15 +15,14 @@
     
 <link rel="stylesheet" href="/css/diaspora.css">
 
-	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+	<script async="" src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script>
          (adsbygoogle = window.adsbygoogle || []).push({
               google_ad_client: "ca-pub-8691406134231910",
               enable_page_level_ads: true
          });
     </script>
-    <script async custom-element="amp-auto-ads"
-        src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    <script async="" custom-element="amp-auto-ads" src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
     </script>
 <meta name="generator" content="Hexo 5.3.0"></head>
 
@@ -52,7 +48,7 @@
 
     <div class="section">
         <div class="article">
-    <div class='main'>
+    <div class="main">
         <h1 class="title">「git-1」关于Git你应该知道的东西</h1>
         <div class="stuff">
             <span>四月 13, 2021</span>
@@ -72,7 +68,7 @@
 <p><img src="https://img.imgdb.cn/item/60759c958322e6675c7d9d76.jpg" alt="初始化级别"></p>
 <p>我们可以使用<code>git config</code> 接要配置的级别，再接上相应的项目，比如这里： </p>
 <blockquote>
-<p><code>git config --global user.name &quot;Your Name&quot;</code><br> #用户名<br><code>git config --global user.email &quot;email@example.com&quot;</code><br> #邮箱</p>
+<p><code>git config --global user.name "Your Name"</code><br> #用户名<br><code>git config --global user.email "email@example.com"</code><br> #邮箱</p>
 <p>查看信息：</p>
 <p><code>git config -l</code></p>
 </blockquote>
@@ -91,20 +87,20 @@
 <h3 id="git隐藏文件夹"><a href="#git隐藏文件夹" class="headerlink" title=".git隐藏文件夹"></a>.git隐藏文件夹</h3><p>初始化完成以后，我们会发现，在工程文件夹下会出现一个<code>.git</code>的文件夹。这个文件夹通常是隐藏的，这也是git存储有关我们的项目历史信息和相关分支的地方。当然，你不需要了解太多，只是记住，不要删除这个文件夹。</p>
 <h3 id="Git工作流"><a href="#Git工作流" class="headerlink" title="Git工作流"></a>Git工作流</h3><p>假设我们的工作文件夹已经初始化了一个git仓库，每当我们的项目达到我们所期望的状态时，我们可以记录我们的更改到存储库中，创建提交就像照快照一样。在git中，我们有一个特殊的区域或者叫做特殊的中间步骤，在其他的控制系统中不存在，它叫做暂存区，我们将修改后的文件添加到暂存区，如果一切正常，我们的快照将被永久地存储在存储库中。</p>
 <p>我们可以使用：</p>
-<p><code>git add &quot;你的文件&quot;</code>进行文件的添加（到工作区）。</p>
-<p><code>git commit -m &quot;提交的注释&quot;</code>进行文件的提交（到存储库）</p>
+<p><code>git add "你的文件"</code>进行文件的添加（到工作区）。</p>
+<p><code>git commit -m "提交的注释"</code>进行文件的提交（到存储库）</p>
 <p><img src="https://img.imgdb.cn/item/6076e3eb8322e6675ce33b5f.jpg" alt="工作流"></p>
 <p>值得注意的是，如果我们对file1和file2做了修改 ，我们还要使用<code>git add file1</code>来保存我们刚刚的修改（到暂存区），再提交到存储库中。当然，如果途中你删除了file1，同样也要使用add命令来更新暂存区（是的你没看错，即使是删除了文件，也是add命令）。</p>
 <p>需要注意的是，git不会自动的追踪文件，我们需要手动的使用add指示git跟踪他们。我们可以使用：<code>git status</code>查看工作状态。如果你使用的是zsh终端，你也可以看出我们的提示标志变成了黄色，也就是“我们的工作区是脏的”，即可以进行下一次提交了。</p>
 <p><img src="https://img.imgdb.cn/item/6076e4c58322e6675ce5582f.jpg" alt="提交"></p>
 <h3 id="Git的提交？（commit）"><a href="#Git的提交？（commit）" class="headerlink" title="Git的提交？（commit）"></a>Git的提交？（commit）</h3><p>我们每次使用commit提交命令，git会生成唯一的标识符，当然它还包括提交的注释和相关内容的修改信息、通过谁可以获得我们项目完整的快照等等信息。</p>
 <p>不同于其他许多版本控制系统，git不存储已经更改的部分，它存储完整的增量信息，这样可以让我们更快地进行恢复。</p>
-<p>前面提到过使用<code>git commit -m &quot;注释&quot;</code>可以进行带注释的提交，那如果去掉<code>-m</code>的注释呢？是的。不加m选项可以直接打开默认的编辑器进行长注释的添加。值得注意的是，在这个文件中我们尽量使用标准的格式，也就是开始一段写较短的总结性的注释，接下来一段再写较长的注释。</p>
+<p>前面提到过使用<code>git commit -m "注释"</code>可以进行带注释的提交，那如果去掉<code>-m</code>的注释呢？是的。不加m选项可以直接打开默认的编辑器进行长注释的添加。值得注意的是，在这个文件中我们尽量使用标准的格式，也就是开始一段写较短的总结性的注释，接下来一段再写较长的注释。</p>
 <p><img src="https://img.imgdb.cn/item/6076e6528322e6675ce8a68b.jpg" alt="长注释"></p>
 <h4 id="什么时候该进行提交？"><a href="#什么时候该进行提交？" class="headerlink" title="什么时候该进行提交？"></a>什么时候该进行提交？</h4><p>不建议将提交的粒度分的太细，也不要过于大，这样会很难进行我们日后的修改，同样，不要尝试每天一定要提交多少次，也不要一次提交包含多个错误修复或更新。最佳的做法是当你的工作达到了你想到达的状态时，进行一次提交。</p>
 <p><img src="https://img.imgdb.cn/item/6076e7ee8322e6675cec09a1.jpg" alt="什么时候该提交"></p>
 
-            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
                 <source type="audio/mpeg" src="">
             </audio>
@@ -115,21 +111,12 @@
             
         </div>
         
-    <div id='gitalk-container' class="comment link"
-		data-enable='false'
-        data-ae='false'
-        data-ci=''
-        data-cs=''
-        data-r=''
-        data-o=''
-        data-a=''
-        data-d='false'
-    >查看评论</div>
+    <div id="gitalk-container" class="comment link" data-enable="false" data-ae="false" data-ci="" data-cs="" data-r="" data-o="" data-a="" data-d="false">查看评论</div>
 
 
     </div>
     
-        <div class='side'>
+        <div class="side">
 			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Git%E7%9A%84%E5%89%8D%E4%B8%96%E4%BB%8A%E7%94%9F"><span class="toc-number">1.</span> <span class="toc-text">Git的前世今生</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%BC%80%E5%A7%8B"><span class="toc-number">2.</span> <span class="toc-text">如何开始</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E9%85%8D%E7%BD%AEGit"><span class="toc-number">2.1.</span> <span class="toc-text">初始化配置Git</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%96%87%E4%BB%B6%E8%A1%8C%E5%B0%BE%EF%BC%8C%E6%80%8E%E4%B9%88%E5%A4%84%E7%90%86%EF%BC%9F"><span class="toc-number">2.2.</span> <span class="toc-text">什么是文件行尾，怎么处理？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%BB%E6%B1%82%E5%B8%AE%E5%8A%A9"><span class="toc-number">2.3.</span> <span class="toc-text">寻求帮助</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Git%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%96%B9%E5%BC%8F"><span class="toc-number">3.</span> <span class="toc-text">Git的工作方式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#git%E9%9A%90%E8%97%8F%E6%96%87%E4%BB%B6%E5%A4%B9"><span class="toc-number">3.1.</span> <span class="toc-text">.git隐藏文件夹</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Git%E5%B7%A5%E4%BD%9C%E6%B5%81"><span class="toc-number">3.2.</span> <span class="toc-text">Git工作流</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Git%E7%9A%84%E6%8F%90%E4%BA%A4%EF%BC%9F%EF%BC%88commit%EF%BC%89"><span class="toc-number">3.3.</span> <span class="toc-text">Git的提交？（commit）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E8%AF%A5%E8%BF%9B%E8%A1%8C%E6%8F%90%E4%BA%A4%EF%BC%9F"><span class="toc-number">3.3.1.</span> <span class="toc-text">什么时候该进行提交？</span></a></li></ol></li></ol></li></ol>	
         </div>
     
@@ -138,7 +125,7 @@
 
     </div>
 </div>
-</body>
+
 
 
 <script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
@@ -208,4 +195,5 @@
 
 
 
-</html>
+
+<script type="text/javascript" charset="utf-8" src="/js/lazyload-plugin/lazyload.intersectionObserver.min.js"></script></body></html><!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->

@@ -1,14 +1,11 @@
-
-<!DOCTYPE html>
-<html lang="zh-CN" class="loading">
-<head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<!DOCTYPE html><html lang="zh-CN" class="loading"><head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Linux下迁移/home分区 - 邓邓的部落格</title>
-    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="google" content="notranslate" />
+    <meta name="google" content="notranslate">
     <meta name="keywords" content="部落格,"> 
     <meta name="description" content="由于当初安装Arch的时候为了方便，就将/home目录和根目录安装在一个分区里了。如今也用了将近快一年的Arch，很明显，/home空间不够用了。这次索性就将其直接划分出一块新的固态给其使用。摸索了,"> 
     <meta name="author" content="Deng Xinhang"> 
@@ -18,15 +15,14 @@
     
 <link rel="stylesheet" href="/css/diaspora.css">
 
-	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+	<script async="" src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script>
          (adsbygoogle = window.adsbygoogle || []).push({
               google_ad_client: "ca-pub-8691406134231910",
               enable_page_level_ads: true
          });
     </script>
-    <script async custom-element="amp-auto-ads"
-        src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    <script async="" custom-element="amp-auto-ads" src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
     </script>
 <meta name="generator" content="Hexo 5.3.0"></head>
 
@@ -52,7 +48,7 @@
 
     <div class="section">
         <div class="article">
-    <div class='main'>
+    <div class="main">
         <h1 class="title">Linux下迁移/home分区</h1>
         <div class="stuff">
             <span>七月 14, 2021</span>
@@ -95,7 +91,7 @@
 <h2 id="能否使用KDE分区编辑器完成上述所有操作？"><a href="#能否使用KDE分区编辑器完成上述所有操作？" class="headerlink" title="能否使用KDE分区编辑器完成上述所有操作？"></a>能否使用KDE分区编辑器完成上述所有操作？</h2><p>我们首先来理一下思路。我们迁移的思路不就是先将原本的<code>/home</code>分区的内容拷贝到新的盘上，然后修改挂载点嘛。细心的小伙伴可能已经发现了，在KDE分区管理器下有一个<code>编辑挂载点</code>的功能。</p>
 <p>其实完全是可以的操作，但是记得在修改挂载点之前一定要记得先将原本<code>/home</code>分区的东西先系数拷贝进去，否则，后果会非常严重。因为修改挂载点的操作是立即执行的，所以在修改前一定要记得先进行备份。</p>
 
-            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
                 <source type="audio/mpeg" src="">
             </audio>
@@ -106,22 +102,13 @@
             
         </div>
         
-    <div id='gitalk-container' class="comment link"
-		data-enable='false'
-        data-ae='false'
-        data-ci=''
-        data-cs=''
-        data-r=''
-        data-o=''
-        data-a=''
-        data-d='false'
-    >查看评论</div>
+    <div id="gitalk-container" class="comment link" data-enable="false" data-ae="false" data-ci="" data-cs="" data-r="" data-o="" data-a="" data-d="false">查看评论</div>
 
 
     </div>
     
-        <div class='side'>
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A1%AE%E5%AE%9A%E5%A5%BD%E6%96%B0%E7%9A%84home%E5%88%86%E5%8C%BA%E4%BD%8D%E7%BD%AE%E5%B9%B6%E6%A0%BC%E5%BC%8F%E5%8C%96"><span class="toc-number">1.</span> <span class="toc-text">确定好新的home分区位置并格式化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%81%E7%A7%BB-home%E5%88%86%E5%8C%BA"><span class="toc-number">2.</span> <span class="toc-text">迁移&#x2F;home分区</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%87%8D%E5%90%AF%E5%AE%8C%E6%88%90%E4%B9%8B%E5%90%8E%E6%A3%80%E6%9F%A5"><span class="toc-number">3.</span> <span class="toc-text">重启完成之后检查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%BD%E5%90%A6%E4%BD%BF%E7%94%A8KDE%E5%88%86%E5%8C%BA%E7%BC%96%E8%BE%91%E5%99%A8%E5%AE%8C%E6%88%90%E4%B8%8A%E8%BF%B0%E6%89%80%E6%9C%89%E6%93%8D%E4%BD%9C%EF%BC%9F"><span class="toc-number">4.</span> <span class="toc-text">能否使用KDE分区编辑器完成上述所有操作？</span></a></li></ol>	
+        <div class="side">
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A1%AE%E5%AE%9A%E5%A5%BD%E6%96%B0%E7%9A%84home%E5%88%86%E5%8C%BA%E4%BD%8D%E7%BD%AE%E5%B9%B6%E6%A0%BC%E5%BC%8F%E5%8C%96"><span class="toc-number">1.</span> <span class="toc-text">确定好新的home分区位置并格式化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%81%E7%A7%BB-home%E5%88%86%E5%8C%BA"><span class="toc-number">2.</span> <span class="toc-text">迁移/home分区</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%87%8D%E5%90%AF%E5%AE%8C%E6%88%90%E4%B9%8B%E5%90%8E%E6%A3%80%E6%9F%A5"><span class="toc-number">3.</span> <span class="toc-text">重启完成之后检查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%BD%E5%90%A6%E4%BD%BF%E7%94%A8KDE%E5%88%86%E5%8C%BA%E7%BC%96%E8%BE%91%E5%99%A8%E5%AE%8C%E6%88%90%E4%B8%8A%E8%BF%B0%E6%89%80%E6%9C%89%E6%93%8D%E4%BD%9C%EF%BC%9F"><span class="toc-number">4.</span> <span class="toc-text">能否使用KDE分区编辑器完成上述所有操作？</span></a></li></ol>	
         </div>
     
 </div>
@@ -129,7 +116,7 @@
 
     </div>
 </div>
-</body>
+
 
 
 <script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
@@ -199,4 +186,5 @@
 
 
 
-</html>
+
+<script type="text/javascript" charset="utf-8" src="/js/lazyload-plugin/lazyload.intersectionObserver.min.js"></script></body></html><!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
