@@ -422,4 +422,32 @@
         <tag>树莓派</tag>
       </tags>
   </entry>
+  <entry>
+    <title>让你的WSL2运行Linux GUI程序吧</title>
+    <url>/2021/10/04/%E8%AE%A9%E4%BD%A0%E7%9A%84WSL2%E8%BF%90%E8%A1%8CLinux-GUI%E7%A8%8B%E5%BA%8F%E5%90%A7/</url>
+    <content><![CDATA[<html><head></head><body><h3 id="WSL2简介"><a href="#WSL2简介" class="headerlink" title="WSL2简介"></a>WSL2简介</h3><p><strong>WSL</strong>全称<strong>Windows Subsystem for Linux</strong>，官方翻译“适用于Linux的Windows子系统”.</p>
+<p><strong>WSL 2</strong> 是适用于 Linux 的 Windows 子系统体系结构的一个新版本，它支持适用于 Linux 的 Windows 子系统在 Windows 上运行 Linux 的二进制文件。 它的主要目标是<strong>提高文件系统性能</strong>，以及添加<strong>完全的系统调用兼容性</strong>。WSL 2的使用方式与Linux别无二致，你可以很方便的在WSL  2中使用Linux的各种命令。但是需要注意的是，WSL中的文件都默认是777权限，这点可能与真实Linux环境不同，某些在WSL中运行正常的程序或者命令，在真实Linux中可能因权限问题而运行失败。</p>
+<p>我们下面的操作都将围绕WSL2进行，这两个版本是可以相互存在的，如果你没有升级的话可以先进行升级WSL2的操作。</p>
+<h3 id="准备工作1——安装XServer图形接口"><a href="#准备工作1——安装XServer图形接口" class="headerlink" title="准备工作1——安装XServer图形接口"></a>准备工作1——安装XServer图形接口</h3><p>要使默认仅支持命令行的WSL2支持GUI程序，首先必须安装XServer服务器，它可以给应用提供基本的图形服务。你可以在<a href="https://sourceforge.net/projects/vcxsrv/">这里</a>下载这个程序，安装到一个你想要的位置，无脑下一步即可。安装完成后，双击图标打开后配置如下：</p>
+<p><a href="https://pic.imgdb.cn/item/615af4192ab3f51d91fb8e25.jpg"><img src="https://pic.imgdb.cn/item/615af4192ab3f51d91fb8e25.jpg" alt="配置1"></a></p>
+<p><a href="https://pic.imgdb.cn/item/615af45e2ab3f51d91fbf60a.jpg"><img src="https://pic.imgdb.cn/item/615af45e2ab3f51d91fbf60a.jpg" alt="配置2"></a></p>
+<p><a href="https://pic.imgdb.cn/item/615af4732ab3f51d91fc1451.jpg"><img src="https://pic.imgdb.cn/item/615af4732ab3f51d91fc1451.jpg" alt="配置3"></a></p>
+<p><strong>接下来我们给XServer配置防火墙放行</strong></p>
+<p><a href="https://pic.imgdb.cn/item/615af72c2ab3f51d91000f61.jpg"><img src="https://pic.imgdb.cn/item/615af72c2ab3f51d91000f61.jpg" alt="防火墙1"></a></p>
+<p><a href="https://pic.imgdb.cn/item/615af7462ab3f51d91003605.jpg"><img src="https://pic.imgdb.cn/item/615af7462ab3f51d91003605.jpg" alt="防火墙2"></a></p>
+<h3 id="准备工作2——WSL2设置"><a href="#准备工作2——WSL2设置" class="headerlink" title="准备工作2——WSL2设置"></a>准备工作2——WSL2设置</h3><p>接下来在WSL2中，编辑你的<code>.bashrc</code>或<code>.zshrc</code>，添加如下代码：</p>
+<figure class="highlight bash"><table><tbody><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> DISPLAY=<span class="variable">${DISPLAY:-$(grep -Po '(?&lt;=nameserver ).*' /etc/resolv.conf):0}</span></span><br><span class="line"><span class="built_in">export</span> LIBGL_ALWAYS_INDIRECT=1</span><br></pre></td></tr></tbody></table></figure>
+<p>然后别忘记了执行<code>source ~/.bashrc</code>或<code>source ~/.zshrc</code></p>
+<h3 id="效果对比"><a href="#效果对比" class="headerlink" title="效果对比"></a>效果对比</h3><p>下面基本上就完成了配置工作，下面试着装一个GUI程序，直接用命令执行它，例如Firefox：</p>
+<p><a href="https://pic.imgdb.cn/item/615afa192ab3f51d91047e0e.jpg"><img src="https://pic.imgdb.cn/item/615afa192ab3f51d91047e0e.jpg" alt="Linux下的Firefox"></a></p>
+<p>当然还可以运行Linux的QQ：</p>
+<p><a href="https://pic.imgdb.cn/item/615afab52ab3f51d910572cb.jpg"><img src="https://pic.imgdb.cn/item/615afab52ab3f51d910572cb.jpg" alt="Linuxqq"></a></p>
+</body></html>]]></content>
+      <categories>
+        <category>教程</category>
+      </categories>
+      <tags>
+        <tag>折腾</tag>
+      </tags>
+  </entry>
 </search>
