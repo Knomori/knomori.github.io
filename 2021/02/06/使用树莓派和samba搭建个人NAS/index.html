@@ -94,6 +94,9 @@
 <p>Windows添加后下次打开此电脑会发现共享的文件夹已经固定在了下面。</p>
 <p><a target="_blank" rel="noopener" href="https://imgchr.com/i/yYRovt"><img src="https://s3.ax1x.com/2021/02/06/yYRovt.png" alt="Windows用户"></a></p>
 <h3 id="防踩坑指南"><a href="#防踩坑指南" class="headerlink" title="防踩坑指南"></a>防踩坑指南</h3><p>第一次配置时我们会发现，明明配置好了，打开网络都能看到我们的这个文件夹了，但为什么就是看不到我插入的硬盘或U盘呢？其实，如果你的树莓派当初选择的是带桌面启动的模式，此服务必须在进入桌面后才可以生效。使用VNC登陆进树莓派即可。如果是家用则完全可以设置树莓派是开机自动以pi用户自动登录，实现此服务插电即用。</p>
+<p>其次，如果树莓派的设定是登陆时使用pi用户以控制台登陆而非图形界面登陆，则u盘等外置硬盘不会自动挂载，这时尝试连接你的特定路径时可能会发生下面的情况：</p>
+<p><img src="https://pic.imgdb.cn/item/61ea84b42ab3f51d91b72454.png" alt="找不到"></p>
+<p>因为这个时候U盘还没有挂载，所以没法找到路径。解决方法就是自行设置控制台下的自动挂载外置U盘或者设定树莓派以桌面方式登陆，或者切换到桌面模式：<code>sudo systemctl isolate graphical.target</code></p>
 
             
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
