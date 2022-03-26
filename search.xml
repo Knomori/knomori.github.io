@@ -181,6 +181,10 @@
 <p>其次，如果树莓派的设定是登陆时使用pi用户以控制台登陆而非图形界面登陆，则u盘等外置硬盘不会自动挂载，这时尝试连接你的特定路径时可能会发生下面的情况：</p>
 <p><img src="https://pic.imgdb.cn/item/61ea84b42ab3f51d91b72454.png" alt="找不到"></p>
 <p>因为这个时候U盘还没有挂载，所以没法找到路径。解决方法就是自行设置控制台下的自动挂载外置U盘或者设定树莓派以桌面方式登陆，或者切换到桌面模式：<code>sudo systemctl isolate graphical.target</code></p>
+<h3 id="防踩坑指南（二）"><a href="#防踩坑指南（二）" class="headerlink" title="防踩坑指南（二）"></a>防踩坑指南（二）</h3><p>如果你的树莓派开启了防火墙功能的话，同样可能出现无法访问等情况，这时候就需要对smbd服务进行放行端口的操作。smbd服务的端口一般为139，使用TCP协议，可以使用如下命令进行放行：</p>
+<p><code>sudo firewall-cmd --zone=public --add-port=139/tcp --permanent </code></p>
+<p><code>sudo firewall-cmd --reload</code></p>
+<p><img src="https://pic.imgdb.cn/item/623e729427f86abb2af387b5.png" alt="防火墙"></p>
 </body></html>]]></content>
       <categories>
         <category>教程</category>
